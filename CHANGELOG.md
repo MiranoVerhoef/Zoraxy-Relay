@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.14.0] - 06.10.26
+### Changed
+- Rename the product from **Zoraxy Tunnel Enhanced** to **Zoraxy Relay** across current plugin metadata, runtime branding, dashboard UI, guided setup and documentation.
+- Refresh dashboard asset cache keys and bump plugin/client version to v1.14.0.
+- Keep the existing plugin ID, release binary names, Docker image name and `ZORAXY_TUNNEL_*` environment variables unchanged for backwards-compatible upgrades.
+
 ## [1.13.0] - 14.09.26
 ### Added
 - First-run plugin wizard for fresh installations, covering Control Node configuration, first tunnel creation, client installation and connection verification.
