@@ -24,6 +24,10 @@ jobs:
       - name: Read plugin version
         id: version
         run: |
+          if [ -f .release-channel ]; then
+            echo "::error::Remove the beta channel marker and prepare stable metadata before publishing a stable release."
+            exit 1
+          fi
           TAG=$(jq -r '"v\(.version_major).\(.version_minor).\(.version_patch)"' .introspect)
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
