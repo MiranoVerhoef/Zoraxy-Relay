@@ -2,7 +2,7 @@
 
 Self-hosted reverse relay for Zoraxy with automated routing, redundant connectors, service health monitoring, activity history, and TLS controls.
 
-> **Compatibility identifiers:** the existing plugin ID, release binary names, Docker image name, and `ZORAXY_TUNNEL_*` environment variables remain unchanged so installed connectors and plugin upgrades continue to work.
+> **v2 identity migration:** the canonical plugin ID is now `com.miranoverhoef.zoraxy-relay`, release binaries use `zoraxy-relay*`, the Docker image is `ghcr.io/miranoverhoef/zoraxy-relay-client`, and new Compose files use `ZORAXY_RELAY_*`. The v2 client still accepts the legacy `ZORAXY_TUNNEL_*` variables and releases temporarily mirror the old Docker image so existing v1 connectors can migrate without losing connectivity.
 
 ## Highlights
 
@@ -11,7 +11,7 @@ Self-hosted reverse relay for Zoraxy with automated routing, redundant connector
 - Per-connector telemetry and service health checks.
 - Persistent activity history.
 - Zoraxy route automation and optional ACME certificate requests.
-- Stable Docker client configuration using `ghcr.io/miranoverhoef/zoraxy-tunnel-client:latest`.
+- Stable Docker client configuration using `ghcr.io/miranoverhoef/zoraxy-relay-client:latest`.
 - Non-destructive connector enrollment: adding a connector does not rotate credentials already in use.
 - Optional automatic Docker client updates via a dedicated What's Up Docker (WUD) updater sidecar.
 - Authenticated dashboard **Update now** control for Automatic Docker connectors.
@@ -24,6 +24,12 @@ Fresh plugin installs open a guided setup wizard that walks through the Control 
 After a connector credential is created, the wizard checks the live connector telemetry every two seconds. **Continue** becomes available when the expected connector ID is actually online. You can choose **Setup later** at any point, rerun the wizard from Settings, and add another connector for redundancy before finishing.
 
 The same connection-aware setup is used after normal **Create tunnel** and **Add connector** actions.
+
+## Upgrading from v1.x
+
+The community index contains a legacy migration entry for `com.miranoverhoef.zoraxy-tunnel`. Zoraxy can update an existing v1.x installation in place; the v2 binary then reports the new `com.miranoverhoef.zoraxy-relay` ID while keeping the same plugin working directory and data files. Existing certificates, tunnel credentials, services, setup state, and activity history therefore remain in place.
+
+Existing Docker connectors using `ghcr.io/miranoverhoef/zoraxy-tunnel-client:latest` can receive v2 through the temporary legacy image mirror. Regenerate the connector Compose configuration when convenient to move to the canonical `ghcr.io/miranoverhoef/zoraxy-relay-client:latest` image and `ZORAXY_RELAY_*` variables.
 
 ## Connector enrollment
 
@@ -64,8 +70,8 @@ Tunnel credentials remain unchanged during normal client or plugin upgrades.
 Requirements: Go 1.23+
 
 ```bash
-go build -o zoraxy-tunnel .
-go build -o tunnel-client ./client
+go build -o zoraxy-relay .
+go build -o zoraxy-relay-client ./client
 ```
 
 ## Zoraxy plugin installation
@@ -73,7 +79,7 @@ go build -o tunnel-client ./client
 Zoraxy 3.2.0+ is recommended. Add this repository's plugin index as a community source:
 
 ```text
-https://raw.githubusercontent.com/MiranoVerhoef/zoraxy-tunnel-enhanced/refs/heads/main/directories/index2.json
+https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/main/directories/index2.json
 ```
 
 The plugin store handles the correct binary for the Zoraxy host platform.

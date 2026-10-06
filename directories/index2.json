@@ -1,16 +1,16 @@
 [
   {
-    "IconPath": "https://raw.githubusercontent.com/MiranoVerhoef/zoraxy-tunnel-enhanced/refs/heads/main/icon.png?v=1.14.0",
+    "IconPath": "https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/main/icon.png?v=2.0.0",
     "PluginIntroSpect": {
-      "id": "com.miranoverhoef.zoraxy-tunnel",
+      "id": "com.miranoverhoef.zoraxy-relay",
       "name": "Zoraxy Relay",
       "author": "Mirano Verhoef",
       "author_contact": "https://github.com/MiranoVerhoef",
       "description": "Secure self-hosted relay for Zoraxy with automated routing, redundant connectors, service health monitoring, and TLS controls.",
-      "url": "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced",
+      "url": "https://github.com/MiranoVerhoef/Zoraxy-Relay",
       "type": 1,
-      "version_major": 1,
-      "version_minor": 14,
+      "version_major": 2,
+      "version_minor": 0,
       "version_patch": 0,
       "static_capture_paths": null,
       "static_capture_ingress": "",
@@ -20,23 +20,119 @@
       "subscription_path": "",
       "subscriptions_events": null,
       "permitted_api_endpoints": [
-        {"endpoint":"/api/proxy/list","method":"GET","reason":"Check installed routes"},
-        {"endpoint":"/api/proxy/add","method":"POST","reason":"Install a service route"},
-        {"endpoint":"/api/proxy/del","method":"POST","reason":"Remove a service route"},
-        {"endpoint":"/api/proxy/setTags","method":"POST","reason":"Assign tags to installed tunnel routes"},
-        {"endpoint":"/api/acme/autoRenew/email","method":"GET","reason":"Read the ACME email configured in Zoraxy"},
-        {"endpoint":"/api/acme/autoRenew/ca","method":"GET","reason":"Read the user's preferred ACME CA"},
-        {"endpoint":"/api/acme/obtainCert","method":"GET","reason":"Issue an SSL certificate for an installed route"}
+        {
+          "endpoint": "/api/proxy/list",
+          "method": "GET",
+          "reason": "Check installed routes"
+        },
+        {
+          "endpoint": "/api/proxy/add",
+          "method": "POST",
+          "reason": "Install a service route"
+        },
+        {
+          "endpoint": "/api/proxy/del",
+          "method": "POST",
+          "reason": "Remove a service route"
+        },
+        {
+          "endpoint": "/api/proxy/setTags",
+          "method": "POST",
+          "reason": "Assign tags to installed tunnel routes"
+        },
+        {
+          "endpoint": "/api/acme/autoRenew/email",
+          "method": "GET",
+          "reason": "Read the ACME email configured in Zoraxy"
+        },
+        {
+          "endpoint": "/api/acme/autoRenew/ca",
+          "method": "GET",
+          "reason": "Read the user's preferred ACME CA"
+        },
+        {
+          "endpoint": "/api/acme/obtainCert",
+          "method": "GET",
+          "reason": "Issue an SSL certificate for an installed route"
+        }
       ]
     },
     "DownloadURLs": {
-      "linux_amd64": "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced/releases/latest/download/zoraxy-tunnel_linux_amd64",
-      "linux_arm64": "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced/releases/latest/download/zoraxy-tunnel_linux_arm64",
-      "linux_arm": "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced/releases/latest/download/zoraxy-tunnel_linux_arm",
-      "darwin_amd64": "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced/releases/latest/download/zoraxy-tunnel_darwin_amd64",
-      "darwin_arm64": "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced/releases/latest/download/zoraxy-tunnel_darwin_arm64",
-      "windows_amd64": "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced/releases/latest/download/zoraxy-tunnel_windows_amd64.exe",
-      "windows_arm64": "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced/releases/latest/download/zoraxy-tunnel_windows_arm64.exe"
+      "linux_amd64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_linux_amd64",
+      "linux_arm64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_linux_arm64",
+      "linux_arm": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_linux_arm",
+      "darwin_amd64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_darwin_amd64",
+      "darwin_arm64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_darwin_arm64",
+      "windows_amd64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_windows_amd64.exe",
+      "windows_arm64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_windows_arm64.exe"
+    }
+  },
+  {
+    "IconPath": "https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/main/icon.png?v=2.0.0",
+    "PluginIntroSpect": {
+      "id": "com.miranoverhoef.zoraxy-tunnel",
+      "name": "Zoraxy Relay (v1 migration)",
+      "author": "Mirano Verhoef",
+      "author_contact": "https://github.com/MiranoVerhoef",
+      "description": "Migration entry for existing v1.x Zoraxy Tunnel installs. Updating moves the installed plugin to the canonical Zoraxy Relay identity.",
+      "url": "https://github.com/MiranoVerhoef/Zoraxy-Relay",
+      "type": 1,
+      "version_major": 2,
+      "version_minor": 0,
+      "version_patch": 0,
+      "static_capture_paths": null,
+      "static_capture_ingress": "",
+      "dynamic_capture_sniff": "",
+      "dynamic_capture_ingress": "",
+      "ui_path": "/ui",
+      "subscription_path": "",
+      "subscriptions_events": null,
+      "permitted_api_endpoints": [
+        {
+          "endpoint": "/api/proxy/list",
+          "method": "GET",
+          "reason": "Check installed routes"
+        },
+        {
+          "endpoint": "/api/proxy/add",
+          "method": "POST",
+          "reason": "Install a service route"
+        },
+        {
+          "endpoint": "/api/proxy/del",
+          "method": "POST",
+          "reason": "Remove a service route"
+        },
+        {
+          "endpoint": "/api/proxy/setTags",
+          "method": "POST",
+          "reason": "Assign tags to installed tunnel routes"
+        },
+        {
+          "endpoint": "/api/acme/autoRenew/email",
+          "method": "GET",
+          "reason": "Read the ACME email configured in Zoraxy"
+        },
+        {
+          "endpoint": "/api/acme/autoRenew/ca",
+          "method": "GET",
+          "reason": "Read the user's preferred ACME CA"
+        },
+        {
+          "endpoint": "/api/acme/obtainCert",
+          "method": "GET",
+          "reason": "Issue an SSL certificate for an installed route"
+        }
+      ]
+    },
+    "DownloadURLs": {
+      "linux_amd64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_linux_amd64",
+      "linux_arm64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_linux_arm64",
+      "linux_arm": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_linux_arm",
+      "darwin_amd64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_darwin_amd64",
+      "darwin_arm64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_darwin_arm64",
+      "windows_amd64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_windows_amd64.exe",
+      "windows_arm64": "https://github.com/MiranoVerhoef/Zoraxy-Relay/releases/latest/download/zoraxy-relay_windows_arm64.exe"
     }
   }
 ]

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/yamux"
-	"zoraxy-tunnel/wire"
+	"github.com/MiranoVerhoef/Zoraxy-Relay/wire"
 )
 
 type controlServer struct {
@@ -26,7 +26,7 @@ func (c *controlServer) listenAndServe(addr string) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("[tunnel] control tls on %s", addr)
+	log.Printf("[relay] control tls on %s", addr)
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
@@ -42,7 +42,7 @@ func (c *controlServer) handle(conn net.Conn) {
 	_ = conn.SetDeadline(time.Now().Add(10 * time.Second))
 	sess, err := yamux.Server(conn, yamux.DefaultConfig())
 	if err != nil {
-		log.Printf("[tunnel] yamux from %s: %v", remote, err)
+		log.Printf("[relay] yamux from %s: %v", remote, err)
 		return
 	}
 	auth, err := sess.Accept()
@@ -79,16 +79,16 @@ func (c *controlServer) handle(conn net.Conn) {
 	now := time.Now().UTC()
 	s := &session{yamux: sess, connectorID: connectorID, joined: now, lastActivity: now, remoteAddr: remote, clientVersion: req.Version, clientHostname: req.Hostname, clientOS: req.OS, clientArch: req.Arch}
 	if c.registry.register(tunnelID, connectorID, s) {
-		log.Printf("[tunnel] replaced connector %s for %s", connectorID, tunnelID)
+		log.Printf("[relay] replaced connector %s for %s", connectorID, tunnelID)
 		appEvents.add("info", "connector.replaced", tunnelID, connectorID, "", "Connector session replaced after reconnect")
 	} else {
 		appEvents.add("info", "connector.connected", tunnelID, connectorID, "", "Connector connected from "+remote)
 	}
-	log.Printf("[tunnel] connector %s connected for %s from %s (%s, %s/%s)", connectorID, tunnelID, remote, req.Version, req.OS, req.Arch)
+	log.Printf("[relay] connector %s connected for %s from %s (%s, %s/%s)", connectorID, tunnelID, remote, req.Version, req.OS, req.Arch)
 	<-sess.CloseChan()
 	c.registry.unregister(tunnelID, connectorID, s)
 	appEvents.add("warning", "connector.disconnected", tunnelID, connectorID, "", "Connector disconnected")
-	log.Printf("[tunnel] connector %s disconnected for %s", connectorID, tunnelID)
+	log.Printf("[relay] connector %s disconnected for %s", connectorID, tunnelID)
 }
 
 func connectorIdentity(explicit, hostname, remote string) string {

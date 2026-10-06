@@ -1,6 +1,6 @@
 let FIRST_UPDATE_MODE='auto';
 const CONNECTOR_UPDATE_BUSY=new Set();
-const WUD_ADMIN_USER='zoraxy-tunnel';
+const WUD_ADMIN_USER='zoraxy-relay';
 let CURRENT_WUD_PASSWORD='';
 
 function resetWudCredential(){CURRENT_WUD_PASSWORD=''}
@@ -59,7 +59,7 @@ createTunnel=async function(){
 };
 
 function v111SafeContainerName(cid){
-  return ('zoraxy-tunnel-'+String(cid||'connector').toLowerCase().replace(/[^a-z0-9_.-]+/g,'-')).slice(0,63);
+  return ('zoraxy-relay-'+String(cid||'connector').toLowerCase().replace(/[^a-z0-9_.-]+/g,'-')).slice(0,63);
 }
 
 refreshCommands=function(){
@@ -69,12 +69,12 @@ refreshCommands=function(){
     const wudPassword=ensureWudPassword();
     document.getElementById('cmd-cli').textContent='Automatic update mode is available for Docker Compose. Choose Manual updates to use the standalone CLI client.';
     document.getElementById('cmd-docker').textContent='Automatic update mode is available for Docker Compose so the updater sidecar can be installed together with the client.';
-    document.getElementById('cmd-compose').textContent=`services:\n  tunnel-client:\n    image: ${IMAGE}:latest\n    pull_policy: always\n    container_name: ${safeName}\n    restart: unless-stopped\n    network_mode: host\n    environment:\n      ZORAXY_TUNNEL_UPDATE_MODE: auto\n      ZORAXY_TUNNEL_UPDATER_USER: ${WUD_ADMIN_USER}\n      ZORAXY_TUNNEL_UPDATER_PASSWORD: ${wudPassword}\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}\n      - --connector-id=${cid}\n    labels:\n      - wud.watch=true\n      - wud.watch.digest=true\n      - wud.trigger.include=docker.zoraxy\n\n  tunnel-client-updater:\n    image: getwud/wud:latest\n    container_name: ${safeName}-updater\n    restart: unless-stopped\n    ports:\n      - 127.0.0.1:3009:3000\n    volumes:\n      - /var/run/docker.sock:/var/run/docker.sock\n    environment:\n      WUD_AUTH_ADMIN_USER: ${WUD_ADMIN_USER}\n      WUD_AUTH_ADMIN_PASSWORD: ${wudPassword}\n      WUD_WATCHER_LOCAL_WATCHBYDEFAULT: \"false\"\n      WUD_TRIGGER_DOCKER_ZORAXY_AUTO: \"true\"\n      WUD_TRIGGER_DOCKER_ZORAXY_PRUNE: \"true\"\n      WUD_TRIGGER_DOCKER_ZORAXY_THRESHOLD: all`;
+    document.getElementById('cmd-compose').textContent=`services:\n  zoraxy-relay-client:\n    image: ${IMAGE}:latest\n    pull_policy: always\n    container_name: ${safeName}\n    restart: unless-stopped\n    network_mode: host\n    environment:\n      ZORAXY_RELAY_UPDATE_MODE: auto\n      ZORAXY_RELAY_UPDATER_USER: ${WUD_ADMIN_USER}\n      ZORAXY_RELAY_UPDATER_PASSWORD: ${wudPassword}\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}\n      - --connector-id=${cid}\n    labels:\n      - wud.watch=true\n      - wud.watch.digest=true\n      - wud.trigger.include=docker.relay\n\n  zoraxy-relay-updater:\n    image: getwud/wud:latest\n    container_name: ${safeName}-updater\n    restart: unless-stopped\n    ports:\n      - 127.0.0.1:3009:3000\n    volumes:\n      - /var/run/docker.sock:/var/run/docker.sock\n    environment:\n      WUD_AUTH_ADMIN_USER: ${WUD_ADMIN_USER}\n      WUD_AUTH_ADMIN_PASSWORD: ${wudPassword}\n      WUD_WATCHER_LOCAL_WATCHBYDEFAULT: \"false\"\n      WUD_TRIGGER_DOCKER_RELAY_AUTO: \"true\"\n      WUD_TRIGGER_DOCKER_RELAY_PRUNE: \"true\"\n      WUD_TRIGGER_DOCKER_RELAY_THRESHOLD: all`;
     return;
   }
-  document.getElementById('cmd-cli').textContent=`tunnel-client \\\n  --server ${host} \\\n  --token ${tok} \\\n  --fingerprint \"${fp}\" \\\n  --connector-id ${cid}`;
-  document.getElementById('cmd-docker').textContent=`docker run -d --name ${safeName} --restart unless-stopped --pull always \\\n  --network host \\\n  -e ZORAXY_TUNNEL_UPDATE_MODE=manual \\\n  ${IMAGE}:latest \\\n  --server ${host} --token ${tok} --fingerprint \"${fp}\" --connector-id ${cid}`;
-  document.getElementById('cmd-compose').textContent=`services:\n  tunnel-client:\n    image: ${IMAGE}:latest\n    pull_policy: always\n    container_name: ${safeName}\n    restart: unless-stopped\n    network_mode: host\n    environment:\n      ZORAXY_TUNNEL_UPDATE_MODE: manual\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}\n      - --connector-id=${cid}`;
+  document.getElementById('cmd-cli').textContent=`zoraxy-relay-client \\\n  --server ${host} \\\n  --token ${tok} \\\n  --fingerprint \"${fp}\" \\\n  --connector-id ${cid}`;
+  document.getElementById('cmd-docker').textContent=`docker run -d --name ${safeName} --restart unless-stopped --pull always \\\n  --network host \\\n  -e ZORAXY_RELAY_UPDATE_MODE=manual \\\n  ${IMAGE}:latest \\\n  --server ${host} --token ${tok} --fingerprint \"${fp}\" --connector-id ${cid}`;
+  document.getElementById('cmd-compose').textContent=`services:\n  zoraxy-relay-client:\n    image: ${IMAGE}:latest\n    pull_policy: always\n    container_name: ${safeName}\n    restart: unless-stopped\n    network_mode: host\n    environment:\n      ZORAXY_RELAY_UPDATE_MODE: manual\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}\n      - --connector-id=${cid}`;
 };
 
 async function requestConnectorUpdate(tunnelID,encodedConnectorID){

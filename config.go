@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-const defaultServiceTag = "ZoraxyTunnel"
+const defaultServiceTag = "ZoraxyRelay"
 
 type Service struct {
 	ID             string `json:"id"`
@@ -104,7 +104,7 @@ func (s *Store) tunnel(id string) (Tunnel, bool) {
 
 func newToken() (plain, hash, hint string) {
 	b := make([]byte, 32); if _, err := rand.Read(b); err != nil { panic(err) }
-	plain = "zt_" + hex.EncodeToString(b); sum := sha256.Sum256([]byte(plain)); hash = "sha256:" + hex.EncodeToString(sum[:]); if len(plain) >= 4 { hint = "…" + plain[len(plain)-4:] }; return
+	plain = "zr_" + hex.EncodeToString(b); sum := sha256.Sum256([]byte(plain)); hash = "sha256:" + hex.EncodeToString(sum[:]); if len(plain) >= 4 { hint = "…" + plain[len(plain)-4:] }; return
 }
 func hashToken(plain string) string { sum := sha256.Sum256([]byte(plain)); return "sha256:" + hex.EncodeToString(sum[:]) }
 func newID(prefix string) string { b := make([]byte, 8); rand.Read(b); return prefix + hex.EncodeToString(b) }

@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"zoraxy-tunnel/wire"
+	"github.com/MiranoVerhoef/Zoraxy-Relay/wire"
 )
 
 type serviceHealth struct {

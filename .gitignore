@@ -1,5 +1,5 @@
-zoraxy-tunnel
-tunnel-client
+zoraxy-relay
+zoraxy-relay-client
 config.json
 cert.pem
 key.pem

@@ -1,4 +1,4 @@
-module zoraxy-tunnel
+module github.com/MiranoVerhoef/Zoraxy-Relay
 
 go 1.23.0
 

@@ -31,17 +31,18 @@ jobs:
       - name: Validate store metadata
         run: |
           jq -e --slurpfile intro .introspect '
-            .[0].PluginIntroSpect.id == $intro[0].id and
-            .[0].PluginIntroSpect.name == $intro[0].name and
-            .[0].PluginIntroSpect.author == $intro[0].author and
-            .[0].PluginIntroSpect.version_major == $intro[0].version_major and
-            .[0].PluginIntroSpect.version_minor == $intro[0].version_minor and
-            .[0].PluginIntroSpect.version_patch == $intro[0].version_patch
+            (.[] | select(.PluginIntroSpect.id == $intro[0].id) | .PluginIntroSpect) as $store |
+            $store.id == $intro[0].id and
+            $store.name == $intro[0].name and
+            $store.author == $intro[0].author and
+            $store.version_major == $intro[0].version_major and
+            $store.version_minor == $intro[0].version_minor and
+            $store.version_patch == $intro[0].version_patch
           ' directories/index2.json
 
       - name: Build plugin + client
         run: |
-          for PKG in "zoraxy-tunnel:." "tunnel-client:./client"; do
+          for PKG in "zoraxy-relay:." "zoraxy-relay-client:./client"; do
             BINARY="${PKG%%:*}"
             PKGDIR="${PKG##*:}"
             for TARGET in linux/amd64 linux/arm64 linux/arm darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
@@ -62,8 +63,8 @@ jobs:
           generate_release_notes: true
           make_latest: true
           files: |
-            zoraxy-tunnel_*
-            tunnel-client_*
+            zoraxy-relay_*
+            zoraxy-relay-client_*
 
   build-docker:
     runs-on: ubuntu-latest
@@ -95,6 +96,9 @@ jobs:
           file: ./client/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
+          # Keep the old image as a migration alias so v1.x auto-update connectors can reach v2.
           tags: |
+            ghcr.io/miranoverhoef/zoraxy-relay-client:latest
+            ghcr.io/miranoverhoef/zoraxy-relay-client:${{ steps.version.outputs.tag }}
             ghcr.io/miranoverhoef/zoraxy-tunnel-client:latest
             ghcr.io/miranoverhoef/zoraxy-tunnel-client:${{ steps.version.outputs.tag }}

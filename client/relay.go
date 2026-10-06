@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"zoraxy-tunnel/wire"
+	"github.com/MiranoVerhoef/Zoraxy-Relay/wire"
 )
 
 func newUpstreamClient(skipTLSVerify bool) *http.Client {
