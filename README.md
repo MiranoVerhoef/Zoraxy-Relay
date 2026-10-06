@@ -95,6 +95,22 @@ Use a different stable connector ID for each redundant host.
 
 ## Development workflow
 
+### Beta testing
+
+Beta builds live on the `beta` branch. Changing its `.introspect` version starts **Beta release**, which runs the full tests and all-platform validation before publishing. Intermediate UI commits do not publish another release. Add this separate community source to a test Zoraxy host:
+
+```text
+https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/beta/directories/index-beta.json
+```
+
+The beta index pins downloads to a prerelease tag, never `releases/latest`. Beta connectors use `ghcr.io/miranoverhoef/zoraxy-relay-client:beta`. Publishing a beta does not update the stable index, stable GitHub release, or Docker `:latest` tag.
+
+The beta uses the same plugin ID as stable, so it updates the existing installation in place and keeps configuration and TLS identity. It is an alternate channel for one installation. Back up the plugin's persistent files before testing. Remove the beta source when returning to stable.
+
+Zoraxy compares only numeric major/minor/patch fields. Each published beta therefore advances the numeric version and uses a tag such as `v2.0.1-beta.1`; the next beta might be `v2.0.2-beta.1`. The eventual stable version must be higher than the tested numeric version for store updates to work. To return to an older stable release, stop the plugin and manually replace only its executable with the stable binary, preserving its persistent files.
+
+For promotion after test approval: prepare a release branch/PR to main with a higher numeric version, remove `.release-channel`, remove the beta suffix from plugin/client versions, restore `.releaseurl` to `releases/latest/download`, set `CLIENT_IMAGE_TAG` to `latest`, and update the stable `directories/index2.json`. Keep the beta index pinned to its last successful beta. Stable publishing remains gated by PR CI and merge.
+
 CI runs on pull requests and on `main`. Intermediate commits on `release/**` branches do not run automatically, which prevents expected release-assembly states such as temporarily mismatched version metadata from creating misleading failed checks. Open a pull request when a release branch is ready; the full Go, JavaScript, build, and store-metadata validation runs there before release.
 
 ## License

@@ -1,0 +1,30 @@
+.btn,.icon-btn,.page-btn,.page-current{border-radius:5px;box-shadow:none;font-weight:600}
+body .btn.primary{background:#1769c2;color:#fff;border-color:#1769c2}
+body.darkTheme .btn.primary{background:#276fce;border-color:#276fce}
+body .btn.secondary{background:var(--theme_bg_primary,#22252b);color:var(--text_color,#eef1f5)}
+.btn:focus-visible,.icon-btn:focus-visible,.expand-btn:focus-visible,.page-btn:focus-visible{outline:2px solid var(--theme_highlight,#1677ff);outline-offset:2px}
+.btn:disabled{cursor:default;opacity:.55;filter:none}
+.btn.secondary:hover,.icon-btn:hover{background:var(--theme_advance,#1b1e23);filter:none}
+.status-dot,.status-dot.ok{width:7px;height:7px;box-shadow:none}
+.connector-identity .status-dot{margin:0;display:inline-block}
+.services-title{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.services-title strong{font-weight:600}
+.service-row{grid-template-columns:minmax(210px,1fr) minmax(280px,1.4fr) auto;gap:20px;padding:14px 12px}
+.service-copy{min-width:0}
+.service-flags{gap:12px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.service-flags .health-chip{border:0;background:transparent!important;border-radius:0;padding:0;font-size:10.5px;color:var(--text_color_secondary,#929aa6)!important}
+.service-note{font-size:10.5px;color:var(--text_color_secondary,#929aa6)}
+.service-note.warning{color:#b77810}
+.connector-badge{border-radius:4px;font-size:9.5px}
+.connector-badge.primary{color:var(--text_color,#eef1f5);background:var(--theme_advance,#1b1e23);border-color:var(--divider_color,#343842)}
+.connector-columns{min-height:30px;background:var(--theme_advance,#1b1e23);color:var(--text_color_secondary,#929aa6);font-size:10px;font-weight:600}
+.connector-columns>div:last-child{text-align:right}
+.connector-head{flex-wrap:wrap;padding:10px 12px;gap:8px 12px}
+.connector-head>span{flex-basis:100%;order:2;line-height:1.5}
+.connector-row{grid-template-columns:minmax(190px,1.2fr) minmax(120px,.7fr) minmax(110px,.65fr) minmax(145px,.85fr) minmax(210px,1.2fr) minmax(130px,.8fr)}
+.connector-cell small{font-size:10px}
+.traffic-sub{gap:8px;flex-wrap:wrap}
+.table-card,.services-box,.connector-section,.settings-card{border-radius:7px}
+.menu,.floating-action-menu,.modal{box-shadow:none}
+@media(max-width:1050px){.connector-row{grid-template-columns:minmax(190px,1.3fr) minmax(115px,.8fr) minmax(110px,.75fr) minmax(120px,.8fr)}}
+@media(max-width:760px){.connector-row{grid-template-columns:1fr auto}.connector-columns{display:none}}

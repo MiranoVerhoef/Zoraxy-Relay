@@ -1,0 +1,77 @@
+name: Beta release
+
+on:
+  push:
+    branches:
+      - beta
+    paths:
+      - '.introspect'
+  workflow_dispatch:
+
+concurrency:
+  group: relay-beta-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/beta'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      - name: Validate beta channel and unique version
+        id: version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          test "$(cat .release-channel)" = beta
+          TAG=$(jq -r '"v\(.version_major).\(.version_minor).\(.version_patch)-beta.1"' .introspect)
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" > /tmp/releases.json
+          if jq -e --arg tag "$TAG" 'any(.[]; .tag_name == $tag)' /tmp/releases.json >/dev/null; then
+            echo "::error::This beta version already exists. Advance the numeric version before publishing another beta."
+            exit 1
+          fi
+      - name: Test and build all assets
+        run: |
+          go test ./...
+          bash scripts/build-release.sh dist
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./client/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/miranoverhoef/zoraxy-relay-client:beta
+            ghcr.io/miranoverhoef/zoraxy-relay-client:${{ steps.version.outputs.tag }}
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ steps.version.outputs.tag }}
+          prerelease: true
+          make_latest: false
+          fail_on_unmatched_files: true
+          body: |
+            Beta test build of Zoraxy Relay. Adds flat controls, direct Add service and Edit actions, clearer status indicators, and connector column labels.
+
+            Test store: https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/beta/directories/index-beta.json
+
+            Uses the existing Relay plugin ID and data directory. Docker clients use :beta. Stable v2.0.0 and Docker :latest are unchanged.
+          files: |
+            dist/zoraxy-relay_*
+            dist/zoraxy-relay-client_*
+            directories/index-beta.json

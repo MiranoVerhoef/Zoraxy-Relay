@@ -38,7 +38,12 @@ function healthChip(tid,sid){
 const _baseRenderServiceRow=renderServiceRow;
 renderServiceRow=function(tid,s){
   const installed=!!s.installed_route,menuId='s-'+tid+'-'+s.id,scheme=(String(s.target||'').split(':')[0]||'http').toUpperCase(),target=String(s.target||'').replace(/^https?:\/\//i,'');
-  return `<div class="service-row"><div class="service-main"><div class="service-state"><span class="status-dot ${installed&&s.enabled?'ok':''}"></span></div><div class="service-copy"><strong>${esc(s.name||s.host)}</strong><span>${esc(s.host)}${s.path?esc(s.path):''}</span></div></div><div class="service-target"><div class="route-line"><span>${esc(scheme)} → </span>${esc(target)}</div><div class="service-flags">${healthChip(tid,s.id)}${s.skip_tls_verify?'<span class="warning-chip">⚠ TLS verification off</span>':''}${!installed?'<span class="warning-chip">Route not installed</span>':!s.enabled?'<span class="warning-chip">Disabled</span>':'<span class="ok-chip">Route installed</span>'}</div></div><div class="service-actions">${installed?`<button class="btn secondary compact" onclick="openService('${tid}','${s.id}')">↗ Open</button>`:''}<div class="manage-wrap"><button class="icon-btn" onclick="toggleActionMenu('${menuId}',event)">•••</button>${renderServiceMenu(tid,s,menuId)}</div></div></div>`;
+  const state=!s.enabled?'<span class="service-note">Disabled</span>':!installed?'<span class="service-note warning">Route not installed</span>':healthChip(tid,s.id);
+  return `<div class="service-row">
+    <div class="service-main"><div class="service-copy"><strong>${esc(s.name||s.host)}</strong><span>${esc(s.host)}${s.path?esc(s.path):''}</span></div></div>
+    <div class="service-target"><div class="route-line"><span>${esc(scheme)} → </span>${esc(target)}</div><div class="service-flags">${state}${s.skip_tls_verify?'<span class="service-note warning">TLS verification disabled</span>':''}${installed?'<span class="service-note">Route installed</span>':''}</div></div>
+    <div class="service-actions">${installed?`<button class="btn secondary compact" onclick="openService('${tid}','${s.id}')">Open</button>`:''}<button class="btn secondary compact" onclick="openSvc('${tid}','${s.id}')">Edit</button><div class="manage-wrap"><button class="icon-btn" aria-label="More actions for ${esc(s.name||s.host)}" onclick="toggleActionMenu('${menuId}',event)">•••</button>${renderServiceMenu(tid,s,menuId)}</div></div>
+  </div>`;
 };
 
 function resolveEventContext(e){

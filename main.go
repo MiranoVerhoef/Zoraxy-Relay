@@ -22,10 +22,10 @@ const (
 const (
 	verMajor = 2
 	verMinor = 0
-	verPatch = 0
+	verPatch = 1
 )
 
-var pluginVersion = fmt.Sprintf("v%d.%d.%d", verMajor, verMinor, verPatch)
+var pluginVersion = fmt.Sprintf("v%d.%d.%d-beta.1", verMajor, verMinor, verPatch)
 
 var pluginSpec = &zp.IntroSpect{
 	ID:            "com.miranoverhoef.zoraxy-relay",

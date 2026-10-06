@@ -1,7 +1,7 @@
 function applyTheme(){document.body.classList.toggle('darkTheme',localStorage.getItem('theme')==='dark')}
 applyTheme();window.addEventListener('storage',applyTheme)
 function apiBase(){let p=window.location.pathname.replace(/index\.html$/,'');const i=p.lastIndexOf('/ui/');if(i>=0)return p.slice(0,i+4)+'api/';if(!p.endsWith('/'))p+='/';return p+'api/'}
-const API=apiBase(),CSRF=document.querySelector('meta[name="zoraxy.csrf.Token"]').content,REPO='https://github.com/MiranoVerhoef/Zoraxy-Relay',IMAGE='ghcr.io/miranoverhoef/zoraxy-relay-client'
+const API=apiBase(),CSRF=document.querySelector('meta[name="zoraxy.csrf.Token"]').content,REPO='https://github.com/MiranoVerhoef/Zoraxy-Relay',IMAGE='ghcr.io/miranoverhoef/zoraxy-relay-client',CLIENT_IMAGE_TAG='beta'
 let STATUS={fingerprint:'',server_host:'',default_tag:'',version:'',control_port:9443,ingress_port:9080},TUNNELS=[],CLIENT_STATS={},svcTunnelId=null,svcServiceId=null,confirmCb=null,installTunnelId=null,installServiceId=null,currentPage=1,pageSize=10,OPEN_MENU=null
 const OPEN_TUNNELS=new Set()
 
@@ -119,7 +119,7 @@ function renderTunnelGroup(t){
   return `<div class="tunnel-group ${open?'open':''}">
     <div class="tunnel-row">
       <div class="col-expand"><button class="expand-btn" onclick="event.stopPropagation();toggleTunnel('${t.id}')">›</button></div>
-      <div class="name-cell" onclick="toggleTunnel('${t.id}')"><div class="device-icon">▰</div><div class="name-stack"><strong>${esc(t.name)}</strong><span>${esc(platform(c))}</span></div></div>
+      <div class="name-cell" onclick="toggleTunnel('${t.id}')"><div class="name-stack"><strong>${esc(t.name)}</strong><span>${esc(platform(c))}</span></div></div>
       <div class="cell">${status}</div><div class="cell">${services.length}</div><div class="cell">${uptime}</div><div class="cell ${update?'version-old':'muted'}">${esc(version)}</div><div class="cell muted">${last}</div>
       <div class="cell"><div class="traffic-main">${formatBytes(traffic)}</div><div class="traffic-sub"><span>↓ ${formatBytes(c.bytes_from_client||0)}</span><span>↑ ${formatBytes(c.bytes_to_client||0)}</span></div></div>
       <div class="cell col-actions"><div class="manage-wrap"><button class="btn secondary compact manage-btn" onclick="toggleActionMenu('${menuId}',event)">Manage <span>⌄</span></button>${renderTunnelMenu(t,menuId,update)}</div></div>
@@ -130,18 +130,19 @@ function renderTunnelGroup(t){
     </div>
   </div>`
 }
-function renderTunnelMenu(t,id,update){return `<div class="menu ${OPEN_MENU===id?'open':''}" onclick="event.stopPropagation()"><button onclick="OPEN_MENU=null;openSvc('${t.id}')">＋ Register service</button>${update?`<button onclick="OPEN_MENU=null;copyDockerUpdate()">⇧ Copy Docker update command</button>`:''}<button onclick="OPEN_MENU=null;askRegenerate('${t.id}')">↻ Regenerate credential</button><button onclick="OPEN_MENU=null;tunnelAction('${t.id}','toggle')">${t.enabled?'Disable tunnel':'Enable tunnel'}</button><div class="menu-sep"></div><button class="danger-item" onclick="OPEN_MENU=null;askDelete('${t.id}')">Delete tunnel</button></div>`}
+function renderTunnelMenu(t,id,update){return `<div class="menu ${OPEN_MENU===id?'open':''}" onclick="event.stopPropagation()"><button onclick="OPEN_MENU=null;openSvc('${t.id}')">Add service</button>${update?`<button onclick="OPEN_MENU=null;copyDockerUpdate()">⇧ Copy Docker update command</button>`:''}<button onclick="OPEN_MENU=null;askRegenerate('${t.id}')">↻ Regenerate credential</button><button onclick="OPEN_MENU=null;tunnelAction('${t.id}','toggle')">${t.enabled?'Disable tunnel':'Enable tunnel'}</button><div class="menu-sep"></div><button class="danger-item" onclick="OPEN_MENU=null;askDelete('${t.id}')">Delete tunnel</button></div>`}
 function renderServices(t){
   const services=t.services||[]
-  if(!services.length)return `<div class="services-box"><div class="services-title">Published services (0)</div><div class="empty-state"><strong>No services published</strong><span>Use Manage → Register service to add one.</span></div></div>`
-  return `<div class="services-box"><div class="services-title">Published services (${services.length})</div>${services.map(s=>renderServiceRow(t.id,s)).join('')}</div>`
+  const header=`<div class="services-title"><strong>Published services (${services.length})</strong><button class="btn primary compact" onclick="openSvc('${t.id}')">Add service</button></div>`
+  return `<div class="services-box">${header}${services.length?services.map(s=>renderServiceRow(t.id,s)).join(''):'<div class="empty-state"><strong>No services published</strong><span>Add a service to connect a public hostname to a local target.</span></div>'}</div>`
 }
 function renderServiceRow(tid,s){
   const installed=!!s.installed_route,menuId='s-'+tid+'-'+s.id,scheme=(String(s.target||'').split(':')[0]||'http').toUpperCase(),target=String(s.target||'').replace(/^https?:\/\//i,'')
   return `<div class="service-row"><div class="service-main"><div class="service-state"><span class="status-dot ${installed&&s.enabled?'ok':''}"></span></div><div class="service-copy"><strong>${esc(s.name||s.host)}</strong><span>${esc(s.host)}${s.path?esc(s.path):''}</span></div></div><div class="service-target"><div class="route-line"><span>${esc(scheme)} → </span>${esc(target)}</div><div class="service-flags">${s.skip_tls_verify?'<span class="warning-chip">⚠ TLS verification off</span>':''}${!installed?'<span class="warning-chip">Route not installed</span>':!s.enabled?'<span class="warning-chip">Disabled</span>':'<span class="ok-chip">Route installed</span>'}</div></div><div class="service-actions">${installed?`<button class="btn secondary compact" onclick="openService('${tid}','${s.id}')">↗ Open</button>`:''}<div class="manage-wrap"><button class="icon-btn" onclick="toggleActionMenu('${menuId}',event)">•••</button>${renderServiceMenu(tid,s,menuId)}</div></div></div>`
 }
-function renderServiceMenu(tid,s,id){const installed=!!s.installed_route;return `<div class="menu ${OPEN_MENU===id?'open':''}" onclick="event.stopPropagation()"><button onclick="OPEN_MENU=null;openSvc('${tid}','${s.id}')">Edit service</button>${installed?`<button onclick="OPEN_MENU=null;svcAction('${tid}','${s.id}','uninstall')">Uninstall route</button>`:`<button onclick="OPEN_MENU=null;askInstall('${tid}','${s.id}')">Install route</button>`}<button onclick="OPEN_MENU=null;svcAction('${tid}','${s.id}','toggle')">${s.enabled?'Disable service':'Enable service'}</button><div class="menu-sep"></div><button class="danger-item" onclick="OPEN_MENU=null;askDeleteService('${tid}','${s.id}')">Delete service</button></div>`}
+function renderServiceMenu(tid,s,id){const installed=!!s.installed_route;return `<div class="menu ${OPEN_MENU===id?'open':''}" onclick="event.stopPropagation()"><button onclick="OPEN_MENU=null;copyServiceURL('${tid}','${s.id}')">Copy URL</button>${installed?`<button onclick="OPEN_MENU=null;svcAction('${tid}','${s.id}','uninstall')">Uninstall route</button>`:`<button onclick="OPEN_MENU=null;askInstall('${tid}','${s.id}')">Install route</button>`}<button onclick="OPEN_MENU=null;svcAction('${tid}','${s.id}','toggle')">${s.enabled?'Disable service':'Enable service'}</button><div class="menu-sep"></div><button class="danger-item" onclick="OPEN_MENU=null;askDeleteService('${tid}','${s.id}')">Delete service</button></div>`}
 function openService(tid,sid){const t=TUNNELS.find(x=>x.id===tid),s=t&&(t.services||[]).find(x=>x.id===sid);if(!s)return;openExternal('https://'+s.host+(s.path||''))}
+function copyServiceURL(tid,sid){const t=TUNNELS.find(x=>x.id===tid),s=t&&(t.services||[]).find(x=>x.id===sid);if(s)copyText('https://'+s.host+(s.path||''))}
 function copyDockerUpdate(){copyText('docker compose pull && docker compose up -d')}
 
 async function createTunnel(){
@@ -157,7 +158,7 @@ function askDelete(id){const t=TUNNELS.find(x=>x.id===id);confirmDialog('Delete 
 function openSvc(tid,sid=null){
   svcTunnelId=tid;svcServiceId=sid;const t=TUNNELS.find(x=>x.id===tid),s=sid&&t?(t.services||[]).find(x=>x.id===sid):null
   document.getElementById('svcName').value=s?.name||'';document.getElementById('svcHost').value=s?.host||'';document.getElementById('svcPath').value=s?.path||'';document.getElementById('svcTarget').value=s?.target||'';document.getElementById('svcTag').value=s?s.tag||'':STATUS.default_tag||'';document.getElementById('svcSkipTLS').checked=!!s?.skip_tls_verify
-  document.getElementById('svcModalTitle').textContent=s?'Edit service':'Register service';document.getElementById('svcSubmitBtn').textContent=s?'Save changes':'Register service';document.getElementById('svcModal').classList.add('show')
+  document.getElementById('svcModalTitle').textContent=s?'Edit service':'Add service';document.getElementById('svcSubmitBtn').textContent=s?'Save changes':'Add service';document.getElementById('svcModal').classList.add('show')
 }
 function closeSvc(){closeModal('svcModal');svcTunnelId=null;svcServiceId=null}
 async function submitService(){
@@ -185,9 +186,9 @@ function showCommands(token,fresh){
   --fingerprint "${fp}"`
   document.getElementById('cmd-docker').textContent=`docker run -d --name zoraxy-relay-client --restart unless-stopped --pull always \\
   --network host \\
-  ${IMAGE}:latest \\
+  ${IMAGE}:${CLIENT_IMAGE_TAG} \\
   --server ${host} --token ${tok} --fingerprint "${fp}"`
-  document.getElementById('cmd-compose').textContent=`services:\n  zoraxy-relay-client:\n    image: ${IMAGE}:latest\n    pull_policy: always\n    container_name: zoraxy-relay-client\n    restart: unless-stopped\n    network_mode: host\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}`
+  document.getElementById('cmd-compose').textContent=`services:\n  zoraxy-relay-client:\n    image: ${IMAGE}:${CLIENT_IMAGE_TAG}\n    pull_policy: always\n    container_name: zoraxy-relay-client\n    restart: unless-stopped\n    network_mode: host\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}`
   document.getElementById('tokenNote').innerHTML=fresh?'This credential is shown <b>once</b>. Store it in your Compose file. Normal updates use <b>:latest</b> and do not change the token.':'Regenerate the credential only when you intentionally want to revoke the old one.'
   switchTab('compose');document.getElementById('cmdModal').classList.add('show')
 }
