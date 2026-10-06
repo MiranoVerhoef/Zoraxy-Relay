@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 06.10.26
+### Changed
+- Complete the project identity transition to **Zoraxy Relay**.
+- Change the canonical plugin ID to `com.miranoverhoef.zoraxy-relay`.
+- Rename plugin release binaries to `zoraxy-relay_*` and client binaries to `zoraxy-relay-client_*`.
+- Publish the canonical Docker image as `ghcr.io/miranoverhoef/zoraxy-relay-client`.
+- Rename generated updater environment variables to `ZORAXY_RELAY_*`, WUD trigger identifiers to `docker.relay`, generated container/service names to Relay identifiers, and new default route tags to `ZoraxyRelay`.
+- Change newly generated connector credentials from the legacy `zt_` prefix to `zr_`.
+- Rename the Go module to `github.com/MiranoVerhoef/Zoraxy-Relay` and update active repository/release links to the renamed repository.
+- Keep backwards-compatible support for legacy `ZORAXY_TUNNEL_*` client variables and publish the old Docker image name as a migration alias.
+- Add a legacy v1 plugin-store migration entry so existing `com.miranoverhoef.zoraxy-tunnel` installations can update in place to the v2 Relay identity without losing plugin data.
+
 ## [1.14.0] - 06.10.26
 ### Changed
 - Rename the product from **Zoraxy Tunnel Enhanced** to **Zoraxy Relay** across current plugin metadata, runtime branding, dashboard UI, guided setup and documentation.
