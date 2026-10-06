@@ -1,7 +1,7 @@
 function applyTheme(){document.body.classList.toggle('darkTheme',localStorage.getItem('theme')==='dark')}
 applyTheme();window.addEventListener('storage',applyTheme)
 function apiBase(){let p=window.location.pathname.replace(/index\.html$/,'');const i=p.lastIndexOf('/ui/');if(i>=0)return p.slice(0,i+4)+'api/';if(!p.endsWith('/'))p+='/';return p+'api/'}
-const API=apiBase(),CSRF=document.querySelector('meta[name="zoraxy.csrf.Token"]').content,REPO='https://github.com/MiranoVerhoef/zoraxy-tunnel',IMAGE='ghcr.io/miranoverhoef/zoraxy-tunnel-client'
+const API=apiBase(),CSRF=document.querySelector('meta[name="zoraxy.csrf.Token"]').content,REPO='https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced',IMAGE='ghcr.io/miranoverhoef/zoraxy-tunnel-client'
 let STATUS={fingerprint:'',server_host:'',default_tag:'',version:'',control_port:9443,ingress_port:9080},TUNNELS=[],CLIENT_STATS={},svcTunnelId=null,svcServiceId=null,confirmCb=null,installTunnelId=null,installServiceId=null,currentPage=1,pageSize=10,OPEN_MENU=null
 const OPEN_TUNNELS=new Set()
 
@@ -82,7 +82,7 @@ async function saveSettings(){
   if(!ok){toast(data?.error||'Could not save settings');return}
   document.getElementById('serverHost').value=ep.value;toast('Control Node saved');await loadStatus()
 }
-async function copyConnectionInfo(){const ep=endpointFromStatus();if(!ep.ok){showTab('settings');toast('Configure the Control Node endpoint first');return}copyText(`Zoraxy Tunnel Enhanced\nControl endpoint: ${ep.value}\nIngress: :${STATUS.ingress_port}\nFingerprint: ${STATUS.fingerprint}`)}
+async function copyConnectionInfo(){const ep=endpointFromStatus();if(!ep.ok){showTab('settings');toast('Configure the Control Node endpoint first');return}copyText(`Zoraxy Relay\nControl endpoint: ${ep.value}\nIngress: :${STATUS.ingress_port}\nFingerprint: ${STATUS.fingerprint}`)}
 
 async function loadTunnels(){
   const [tRes,cRes]=await Promise.all([api('tunnels'),api('client-stats')])
