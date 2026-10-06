@@ -1,10 +1,10 @@
-const ENHANCED_REPO='https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced';
+const RELAY_REPO='https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced';
 
 // Keep all documentation and release links on the renamed repository while the
 // Docker image name stays stable for backwards-compatible Compose files.
-openDocs=function(){openExternal(ENHANCED_REPO+'#readme')};
-releaseBase=function(){return ENHANCED_REPO+'/releases/download/'+(STATUS.version||'latest')+'/'};
-releasePage=function(){return ENHANCED_REPO+'/releases/'+(STATUS.version?'tag/'+STATUS.version:'latest')};
+openDocs=function(){openExternal(RELAY_REPO+'#readme')};
+releaseBase=function(){return RELAY_REPO+'/releases/download/'+(STATUS.version||'latest')+'/'};
+releasePage=function(){return RELAY_REPO+'/releases/'+(STATUS.version?'tag/'+STATUS.version:'latest')};
 
 const CONNECT_SETUP={
   tunnelId:'',tunnelName:'',token:'',connectorId:'',mode:'auto',connected:false,
@@ -169,7 +169,7 @@ async function openFirstRunWizard(manual=false){
 function renderFirstRun(step){
   const root=document.getElementById('firstRunWizard');if(!root)return;
   if(step==='welcome'){
-    root.innerHTML=`<div class="setup-wizard-head"><div><h2>Welcome to Zoraxy Tunnel Enhanced</h2><p>A short guided setup will configure the control node and connect your first tunnel.</p></div></div>${setupProgress(1,4)}<div class="setup-body"><div class="setup-finish"><div class="setup-finish-mark">⇄</div><h3>Set up your tunnel node</h3><p>The wizard checks each step as you go. Nothing is hidden behind a large command block, and you can leave setup at any time.</p></div><div class="setup-summary"><div class="setup-summary-item"><span>Step 1</span><strong>Configure control endpoint</strong></div><div class="setup-summary-item"><span>Step 2</span><strong>Create your first tunnel</strong></div><div class="setup-summary-item"><span>Step 3</span><strong>Connect and verify a client</strong></div><div class="setup-summary-item"><span>Optional</span><strong>Add a redundant connector</strong></div></div></div><div class="setup-actions"><button class="btn secondary" onclick="dismissFirstRunSetup()">Setup later</button><div class="setup-spacer"></div><button class="btn primary" onclick="renderFirstRun('control')">Start setup</button></div>`;return;
+    root.innerHTML=`<div class="setup-wizard-head"><div><h2>Welcome to Zoraxy Relay</h2><p>A short guided setup will configure the control node and connect your first tunnel.</p></div></div>${setupProgress(1,4)}<div class="setup-body"><div class="setup-finish"><div class="setup-finish-mark">⇄</div><h3>Set up your tunnel node</h3><p>The wizard checks each step as you go. Nothing is hidden behind a large command block, and you can leave setup at any time.</p></div><div class="setup-summary"><div class="setup-summary-item"><span>Step 1</span><strong>Configure control endpoint</strong></div><div class="setup-summary-item"><span>Step 2</span><strong>Create your first tunnel</strong></div><div class="setup-summary-item"><span>Step 3</span><strong>Connect and verify a client</strong></div><div class="setup-summary-item"><span>Optional</span><strong>Add a redundant connector</strong></div></div></div><div class="setup-actions"><button class="btn secondary" onclick="dismissFirstRunSetup()">Setup later</button><div class="setup-spacer"></div><button class="btn primary" onclick="renderFirstRun('control')">Start setup</button></div>`;return;
   }
   if(step==='control'){
     root.innerHTML=`<div class="setup-wizard-head"><div><h2>Control node</h2><p>Tell clients how to reach this Zoraxy instance.</p></div></div>${setupProgress(1,4)}<div class="setup-body"><div class="setup-inline-form"><div class="field span-2"><label>Public hostname or address</label><input class="input" id="firstRunHost" value="${esc(STATUS.server_host||'')}" placeholder="tunnel.example.com"><small>Port ${STATUS.control_port||9443} is added automatically when omitted.</small></div><div class="field span-2"><label>Default Zoraxy TAG <span>optional</span></label><input class="input" id="firstRunTag" value="${esc(STATUS.default_tag||'ZoraxyTunnel')}" placeholder="ZoraxyTunnel"></div></div><div class="setup-summary"><div class="setup-summary-item"><span>Control port</span><strong class="mono">:${STATUS.control_port||9443}</strong></div><div class="setup-summary-item"><span>Ingress port</span><strong class="mono">:${STATUS.ingress_port||9080}</strong></div></div></div><div class="setup-actions"><button class="btn secondary" onclick="dismissFirstRunSetup()">Setup later</button><div class="setup-spacer"></div><button class="btn secondary" onclick="renderFirstRun('welcome')">Back</button><button class="btn primary" onclick="saveFirstRunControl()">Save & continue</button></div>`;return;
@@ -180,7 +180,7 @@ function renderFirstRun(step){
   }
   if(step==='finish'){
     const t=TUNNELS.find(x=>x.id===CONNECT_SETUP.tunnelId),stats=CLIENT_STATS[CONNECT_SETUP.tunnelId]||{},online=connectorList(stats).filter(x=>x.online).length;
-    root.innerHTML=`<div class="setup-wizard-head"><div><h2>Setup complete</h2><p>Your control node and first tunnel are ready.</p></div></div>${setupProgress(4,4)}<div class="setup-body"><div class="setup-finish"><div class="setup-finish-mark">✓</div><h3>Zoraxy Tunnel Enhanced is ready</h3><p>${esc(t?.name||CONNECT_SETUP.tunnelName)} has ${online} online connector${online===1?'':'s'}. You can now publish a service through the tunnel or return to the dashboard.</p></div></div><div class="setup-actions"><button class="btn secondary" onclick="completeFirstRun(false)">Go to dashboard</button><div class="setup-spacer"></div><button class="btn primary" onclick="completeFirstRun(true)">Register first service</button></div>`;
+    root.innerHTML=`<div class="setup-wizard-head"><div><h2>Setup complete</h2><p>Your control node and first tunnel are ready.</p></div></div>${setupProgress(4,4)}<div class="setup-body"><div class="setup-finish"><div class="setup-finish-mark">✓</div><h3>Zoraxy Relay is ready</h3><p>${esc(t?.name||CONNECT_SETUP.tunnelName)} has ${online} online connector${online===1?'':'s'}. You can now publish a service through the tunnel or return to the dashboard.</p></div></div><div class="setup-actions"><button class="btn secondary" onclick="completeFirstRun(false)">Go to dashboard</button><div class="setup-spacer"></div><button class="btn primary" onclick="completeFirstRun(true)">Register first service</button></div>`;
   }
 }
 async function saveFirstRunControl(){

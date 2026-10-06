@@ -1,6 +1,8 @@
-# Zoraxy Tunnel Enhanced
+# Zoraxy Relay
 
-Self-hosted reverse tunnels for Zoraxy with automated routing, redundant connectors, service health monitoring, activity history, and TLS controls.
+Self-hosted reverse relay for Zoraxy with automated routing, redundant connectors, service health monitoring, activity history, and TLS controls.
+
+> **Compatibility identifiers:** the existing plugin ID, release binary names, Docker image name, and `ZORAXY_TUNNEL_*` environment variables remain unchanged so installed connectors and plugin upgrades continue to work.
 
 ## Highlights
 
@@ -33,7 +35,7 @@ The dashboard offers two Docker setup modes both when creating the first tunnel 
 
 The generated Compose stack includes a WUD updater sidecar. WUD watches the tunnel client's mutable `:latest` image by digest and recreates that client when a new image is available.
 
-WUD 9.x requires authentication. Zoraxy Tunnel Enhanced therefore generates a random updater administrator password for each new Automatic setup and places the matching credentials in both services. The tunnel client reports those credentials only over the existing TLS-protected control connection so the dashboard can authenticate its **Update now** requests. The plugin keeps the credentials in memory only and does not expose them through telemetry or its API.
+WUD 9.x requires authentication. Zoraxy Relay therefore generates a random updater administrator password for each new Automatic setup and places the matching credentials in both services. The tunnel client reports those credentials only over the existing TLS-protected control connection so the dashboard can authenticate its **Update now** requests. The plugin keeps the credentials in memory only and does not expose them through telemetry or its API.
 
 Only the updater sidecar receives the Docker socket:
 

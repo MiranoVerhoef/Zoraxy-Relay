@@ -21,7 +21,7 @@ const (
 
 const (
 	verMajor = 1
-	verMinor = 13
+	verMinor = 14
 	verPatch = 0
 )
 
@@ -29,10 +29,10 @@ var pluginVersion = fmt.Sprintf("v%d.%d.%d", verMajor, verMinor, verPatch)
 
 var pluginSpec = &zp.IntroSpect{
 	ID:            "com.miranoverhoef.zoraxy-tunnel",
-	Name:          "Zoraxy Tunnel Enhanced",
+	Name:          "Zoraxy Relay",
 	Author:        "Mirano Verhoef",
 	AuthorContact: "https://github.com/MiranoVerhoef",
-	Description:   "Secure self-hosted reverse tunneling for Zoraxy with automated routing, redundant connectors, service health monitoring, and TLS controls.",
+	Description:   "Secure self-hosted relay for Zoraxy with automated routing, redundant connectors, service health monitoring, and TLS controls.",
 	URL:           "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced",
 	Type:          zp.PluginType_Utilities,
 	VersionMajor:  verMajor,
@@ -117,7 +117,7 @@ func main() {
 			log.Printf("[tunnel] ingress: %v", err)
 		}
 	}()
-	appEvents.add("info", "plugin.start", "", "", "", "Zoraxy Tunnel Enhanced "+pluginVersion+" started")
+	appEvents.add("info", "plugin.start", "", "", "", "Zoraxy Relay "+pluginVersion+" started")
 	log.Printf("[tunnel] ui :%d  ingress :%d  control :%d", uiPort, ingressPort, controlPort)
 	log.Fatalf("[tunnel] %v", http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", uiPort), mux))
 }
