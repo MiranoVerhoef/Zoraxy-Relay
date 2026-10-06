@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"zoraxy-tunnel/wire"
+	"github.com/MiranoVerhoef/Zoraxy-Relay/wire"
 )
 
 const connectorUpdaterTarget = "http://127.0.0.1:3009"
