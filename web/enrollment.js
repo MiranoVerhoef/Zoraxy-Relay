@@ -66,10 +66,10 @@ refreshCommands=function(){
   if(CURRENT_UPDATE_MODE!=='auto')return _enrollBaseRefreshCommands();
   const ep=endpointFromStatus();if(!ep.ok)return;
   const host=ep.value,fp=STATUS.fingerprint||'',tok=CURRENT_CMD_TOKEN||'<TOKEN>',raw=document.getElementById('connectorId')?.value||defaultConnectorID(CURRENT_CMD_TUNNEL),cid=raw.trim()||'connector-1';
-  const safeName=('zoraxy-tunnel-'+cid.toLowerCase().replace(/[^a-z0-9_.-]+/g,'-')).slice(0,63);
+  const safeName=('zoraxy-relay-'+cid.toLowerCase().replace(/[^a-z0-9_.-]+/g,'-')).slice(0,63);
   document.getElementById('cmd-cli').textContent='Automatic update mode is available for Docker Compose. Choose Manual updates to use the standalone CLI client.';
   document.getElementById('cmd-docker').textContent='Automatic update mode is available for Docker Compose so the updater sidecar can be installed together with the client.';
-  document.getElementById('cmd-compose').textContent=`services:\n  tunnel-client:\n    image: ${IMAGE}:latest\n    pull_policy: always\n    container_name: ${safeName}\n    restart: unless-stopped\n    network_mode: host\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}\n      - --connector-id=${cid}\n    labels:\n      - wud.watch=true\n      - wud.watch.digest=true\n      - wud.trigger.docker.zoraxy.enabled=true\n\n  tunnel-client-updater:\n    image: getwud/wud:latest\n    container_name: ${safeName}-updater\n    restart: unless-stopped\n    volumes:\n      - /var/run/docker.sock:/var/run/docker.sock\n    environment:\n      - WUD_WATCHER_LOCAL_WATCHBYDEFAULT=false\n      - WUD_TRIGGER_DOCKER_ZORAXY_PRUNE=true`;
+  document.getElementById('cmd-compose').textContent=`services:\n  zoraxy-relay-client:\n    image: ${IMAGE}:latest\n    pull_policy: always\n    container_name: ${safeName}\n    restart: unless-stopped\n    network_mode: host\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}\n      - --connector-id=${cid}\n    labels:\n      - wud.watch=true\n      - wud.watch.digest=true\n      - wud.trigger.docker.relay.enabled=true\n\n  zoraxy-relay-updater:\n    image: getwud/wud:latest\n    container_name: ${safeName}-updater\n    restart: unless-stopped\n    volumes:\n      - /var/run/docker.sock:/var/run/docker.sock\n    environment:\n      - WUD_WATCHER_LOCAL_WATCHBYDEFAULT=false\n      - WUD_TRIGGER_DOCKER_RELAY_PRUNE=true`;
 };
 
 const _enrollBaseOpenCreateTunnel=openCreateTunnel;
