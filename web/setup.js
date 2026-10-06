@@ -1,4 +1,4 @@
-const RELAY_REPO='https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced';
+const RELAY_REPO='https://github.com/MiranoVerhoef/Zoraxy-Relay';
 
 // Keep all documentation and release links on the renamed repository while the
 // Docker image name stays stable for backwards-compatible Compose files.
