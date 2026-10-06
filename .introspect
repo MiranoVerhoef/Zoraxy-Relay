@@ -1,13 +1,13 @@
 {
-  "id": "com.miranoverhoef.zoraxy-tunnel",
+  "id": "com.miranoverhoef.zoraxy-relay",
   "name": "Zoraxy Relay",
   "author": "Mirano Verhoef",
   "author_contact": "https://github.com/MiranoVerhoef",
   "description": "Secure self-hosted relay for Zoraxy with automated routing, redundant connectors, service health monitoring, and TLS controls.",
-  "url": "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced",
+  "url": "https://github.com/MiranoVerhoef/Zoraxy-Relay",
   "type": 1,
-  "version_major": 1,
-  "version_minor": 14,
+  "version_major": 2,
+  "version_minor": 0,
   "version_patch": 0,
   "ui_path": "/ui",
   "permitted_api_endpoints": [
