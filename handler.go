@@ -457,7 +457,7 @@ func (a *apiServer) tryRemoveRoute(r *http.Request, host string) {
 		return
 	}
 	if err := removeRoute(a.zPort, a.apiKey, extractCSRF(r), extractCookie(r), host); err != nil {
-		log.Printf("[tunnel] remove route %s: %v", host, err)
+		log.Printf("[relay] remove route %s: %v", host, err)
 	}
 }
 
