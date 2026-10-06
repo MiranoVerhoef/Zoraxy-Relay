@@ -1,7 +1,7 @@
 function applyTheme(){document.body.classList.toggle('darkTheme',localStorage.getItem('theme')==='dark')}
 applyTheme();window.addEventListener('storage',applyTheme)
 function apiBase(){let p=window.location.pathname.replace(/index\.html$/,'');const i=p.lastIndexOf('/ui/');if(i>=0)return p.slice(0,i+4)+'api/';if(!p.endsWith('/'))p+='/';return p+'api/'}
-const API=apiBase(),CSRF=document.querySelector('meta[name="zoraxy.csrf.Token"]').content,REPO='https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced',IMAGE='ghcr.io/miranoverhoef/zoraxy-tunnel-client'
+const API=apiBase(),CSRF=document.querySelector('meta[name="zoraxy.csrf.Token"]').content,REPO='https://github.com/MiranoVerhoef/Zoraxy-Relay',IMAGE='ghcr.io/miranoverhoef/zoraxy-relay-client'
 let STATUS={fingerprint:'',server_host:'',default_tag:'',version:'',control_port:9443,ingress_port:9080},TUNNELS=[],CLIENT_STATS={},svcTunnelId=null,svcServiceId=null,confirmCb=null,installTunnelId=null,installServiceId=null,currentPage=1,pageSize=10,OPEN_MENU=null
 const OPEN_TUNNELS=new Set()
 
@@ -179,20 +179,20 @@ function runConfirm(){const cb=confirmCb;closeConfirm();if(cb)cb()}
 function showCommands(token,fresh){
   const ep=endpointFromStatus();if(!ep.ok){showTab('settings');toast('Configure the Control Node endpoint first');return}
   const host=ep.value,fp=STATUS.fingerprint||'',tok=token||'<TOKEN>'
-  document.getElementById('cmd-cli').textContent=`tunnel-client \\
+  document.getElementById('cmd-cli').textContent=`zoraxy-relay-client \\
   --server ${host} \\
   --token ${tok} \\
   --fingerprint "${fp}"`
-  document.getElementById('cmd-docker').textContent=`docker run -d --name tunnel-client --restart unless-stopped --pull always \\
+  document.getElementById('cmd-docker').textContent=`docker run -d --name zoraxy-relay-client --restart unless-stopped --pull always \\
   --network host \\
   ${IMAGE}:latest \\
   --server ${host} --token ${tok} --fingerprint "${fp}"`
-  document.getElementById('cmd-compose').textContent=`services:\n  tunnel-client:\n    image: ${IMAGE}:latest\n    pull_policy: always\n    container_name: tunnel-client\n    restart: unless-stopped\n    network_mode: host\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}`
+  document.getElementById('cmd-compose').textContent=`services:\n  zoraxy-relay-client:\n    image: ${IMAGE}:latest\n    pull_policy: always\n    container_name: zoraxy-relay-client\n    restart: unless-stopped\n    network_mode: host\n    command:\n      - --server=${host}\n      - --token=${tok}\n      - --fingerprint=${fp}`
   document.getElementById('tokenNote').innerHTML=fresh?'This credential is shown <b>once</b>. Store it in your Compose file. Normal updates use <b>:latest</b> and do not change the token.':'Regenerate the credential only when you intentionally want to revoke the old one.'
   switchTab('compose');document.getElementById('cmdModal').classList.add('show')
 }
 function switchTab(tab){['cli','docker','compose'].forEach(t=>{document.getElementById('tab-'+t).style.display=t===tab?'block':'none';document.querySelector(`.modal-tabs [data-tab="${t}"]`).classList.toggle('active',t===tab)})}
-function openDownloads(){const base=releaseBase(),items=[['Linux x64','tunnel-client_linux_amd64'],['Linux ARM64','tunnel-client_linux_arm64'],['Windows x64','tunnel-client_windows_amd64.exe'],['Windows ARM64','tunnel-client_windows_arm64.exe'],['macOS Apple Silicon','tunnel-client_darwin_arm64'],['macOS Intel','tunnel-client_darwin_amd64']];document.getElementById('downloadLinks').innerHTML=items.map(([label,file])=>`<button class="btn secondary" style="justify-content:space-between" onclick="openExternal('${base}${file}')"><span>${label}</span><span class="mono" style="font-size:10px;opacity:.65">${file}</span></button>`).join('')+`<button class="btn secondary" onclick="openExternal('${releasePage()}')">View all release assets</button>`;document.getElementById('downloadModal').classList.add('show')}
+function openDownloads(){const base=releaseBase(),items=[['Linux x64','zoraxy-relay-client_linux_amd64'],['Linux ARM64','zoraxy-relay-client_linux_arm64'],['Windows x64','zoraxy-relay-client_windows_amd64.exe'],['Windows ARM64','zoraxy-relay-client_windows_arm64.exe'],['macOS Apple Silicon','zoraxy-relay-client_darwin_arm64'],['macOS Intel','zoraxy-relay-client_darwin_amd64']];document.getElementById('downloadLinks').innerHTML=items.map(([label,file])=>`<button class="btn secondary" style="justify-content:space-between" onclick="openExternal('${base}${file}')"><span>${label}</span><span class="mono" style="font-size:10px;opacity:.65">${file}</span></button>`).join('')+`<button class="btn secondary" onclick="openExternal('${releasePage()}')">View all release assets</button>`;document.getElementById('downloadModal').classList.add('show')}
 
 document.addEventListener('click',e=>{if(!e.target.closest('.manage-wrap'))closeMenus()})
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.overlay.show').forEach(x=>x.classList.remove('show'));OPEN_MENU=null}})
