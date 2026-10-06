@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/yamux"
-	"zoraxy-tunnel/wire"
+	"github.com/MiranoVerhoef/Zoraxy-Relay/wire"
 )
 
 var errTunnelOffline = errors.New("tunnel offline")
