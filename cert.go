@@ -76,7 +76,7 @@ func (c *certManager) create() error {
 	now := time.Now()
 	tmpl := &x509.Certificate{
 		SerialNumber: serial,
-		Subject:      pkix.Name{CommonName: "zoraxy-tunnel"},
+		Subject:      pkix.Name{CommonName: "zoraxy-relay"},
 		NotBefore:    now.Add(-time.Hour),
 		NotAfter:     now.Add(certValidity),
 		KeyUsage:     x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
