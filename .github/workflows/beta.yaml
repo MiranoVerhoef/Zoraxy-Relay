@@ -38,8 +38,12 @@ jobs:
             exit 1
           fi
           gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" > /tmp/releases.json
-          if jq -e --arg tag "$TAG" 'any(.[]; .tag_name == $tag)' /tmp/releases.json >/dev/null; then
+          if jq -e --arg tag "$TAG" 'any(.[]; .tag_name == $tag and .draft == false)' /tmp/releases.json >/dev/null; then
             echo "::error::This beta version already exists. Advance the numeric version before publishing another beta."
+            exit 1
+          fi
+          if ! jq -e --arg tag "$TAG" 'any(.[]; .tag_name == $tag and .draft == true)' /tmp/releases.json >/dev/null; then
+            echo "::error::Precreate this beta release as a draft using maintainer credentials before pushing the beta branch."
             exit 1
           fi
       - name: Test and build all assets
@@ -68,6 +72,7 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: ${{ steps.version.outputs.tag }}
           prerelease: true
+          draft: false
           make_latest: false
           fail_on_unmatched_files: true
           body: |
