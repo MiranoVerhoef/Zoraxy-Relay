@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	zp "zoraxy-tunnel/zoraxy_plugin"
+	zp "github.com/MiranoVerhoef/Zoraxy-Relay/zoraxy_plugin"
 )
 
 //go:embed web/* icon.png
@@ -20,20 +20,20 @@ const (
 )
 
 const (
-	verMajor = 1
-	verMinor = 14
+	verMajor = 2
+	verMinor = 0
 	verPatch = 0
 )
 
 var pluginVersion = fmt.Sprintf("v%d.%d.%d", verMajor, verMinor, verPatch)
 
 var pluginSpec = &zp.IntroSpect{
-	ID:            "com.miranoverhoef.zoraxy-tunnel",
+	ID:            "com.miranoverhoef.zoraxy-relay",
 	Name:          "Zoraxy Relay",
 	Author:        "Mirano Verhoef",
 	AuthorContact: "https://github.com/MiranoVerhoef",
 	Description:   "Secure self-hosted relay for Zoraxy with automated routing, redundant connectors, service health monitoring, and TLS controls.",
-	URL:           "https://github.com/MiranoVerhoef/zoraxy-tunnel-enhanced",
+	URL:           "https://github.com/MiranoVerhoef/Zoraxy-Relay",
 	Type:          zp.PluginType_Utilities,
 	VersionMajor:  verMajor,
 	VersionMinor:  verMinor,
@@ -53,7 +53,7 @@ var pluginSpec = &zp.IntroSpect{
 func main() {
 	config, err := zp.ServeAndRecvSpec(pluginSpec)
 	if err != nil {
-		log.Println("[tunnel] dev mode (no -configure flag)")
+		log.Println("[relay] dev mode (no -configure flag)")
 		config = &zp.ConfigureSpec{Port: 9699}
 	}
 	zPort := config.ZoraxyPort
@@ -62,27 +62,27 @@ func main() {
 	}
 	uiPort := config.Port
 	pluginDir := workingDir()
-	log.Printf("[tunnel] data dir: %s", pluginDir)
+	log.Printf("[relay] data dir: %s", pluginDir)
 	appEvents.setPath(filepath.Join(pluginDir, "events.json"))
 	appSetup = newSetupStateStore(pluginDir)
 	if err := appSetup.load(); err != nil {
-		log.Printf("[tunnel] setup state load: %v", err)
+		log.Printf("[relay] setup state load: %v", err)
 	}
 
 	if icon, err := webFS.ReadFile("icon.png"); err == nil {
 		iconPath := filepath.Join(filepath.Dir(exePath()), "icon.png")
 		if err := os.WriteFile(iconPath, icon, 0644); err != nil {
-			log.Printf("[tunnel] icon write: %v", err)
+			log.Printf("[relay] icon write: %v", err)
 		}
 	}
 	certs := newCertManager(pluginDir)
 	if err := certs.LoadOrCreate(); err != nil {
-		log.Fatalf("[tunnel] cert: %v", err)
+		log.Fatalf("[relay] cert: %v", err)
 	}
-	log.Printf("[tunnel] cert fingerprint: %s", certs.Fingerprint())
+	log.Printf("[relay] cert fingerprint: %s", certs.Fingerprint())
 	store := newStore(pluginDir)
 	if err := store.Load(); err != nil {
-		log.Printf("[tunnel] config load: %v", err)
+		log.Printf("[relay] config load: %v", err)
 	}
 	registry := newSessionRegistry()
 	appHealth = newHealthManager(store, registry)
@@ -104,22 +104,22 @@ func main() {
 	mux.HandleFunc("/ui/api/events", api.handleEvents)
 	ui := zp.NewPluginEmbedUIRouter(pluginSpec.ID, &webFS, "web", "/ui")
 	ui.AttachHandlerToMux(mux)
-	ui.RegisterTerminateHandler(func() { log.Println("[tunnel] bye") }, mux)
+	ui.RegisterTerminateHandler(func() { log.Println("[relay] bye") }, mux)
 	control := newControlServer(certs.TLSConfig(), store, registry)
 	go func() {
 		if err := control.listenAndServe(fmt.Sprintf("0.0.0.0:%d", controlPort)); err != nil {
-			log.Printf("[tunnel] control: %v", err)
+			log.Printf("[relay] control: %v", err)
 		}
 	}()
 	ingress := newIngressServer(store, registry)
 	go func() {
 		if err := ingress.listenAndServe(fmt.Sprintf("127.0.0.1:%d", ingressPort)); err != nil {
-			log.Printf("[tunnel] ingress: %v", err)
+			log.Printf("[relay] ingress: %v", err)
 		}
 	}()
 	appEvents.add("info", "plugin.start", "", "", "", "Zoraxy Relay "+pluginVersion+" started")
-	log.Printf("[tunnel] ui :%d  ingress :%d  control :%d", uiPort, ingressPort, controlPort)
-	log.Fatalf("[tunnel] %v", http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", uiPort), mux))
+	log.Printf("[relay] ui :%d  ingress :%d  control :%d", uiPort, ingressPort, controlPort)
+	log.Fatalf("[relay] %v", http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", uiPort), mux))
 }
 
 func exePath() string {
