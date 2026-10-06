@@ -41,7 +41,7 @@ jobs:
 
       - name: Build plugin + client
         run: |
-          for PKG in "zoraxy-tunnel:." "tunnel-client:./client"; do
+          for PKG in "zoraxy-relay:." "zoraxy-relay-client:./client"; do
             BINARY="${PKG%%:*}"
             PKGDIR="${PKG##*:}"
             for TARGET in linux/amd64 linux/arm64 linux/arm darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
@@ -62,8 +62,8 @@ jobs:
           generate_release_notes: true
           make_latest: true
           files: |
-            zoraxy-tunnel_*
-            tunnel-client_*
+            zoraxy-relay_*
+            zoraxy-relay-client_*
 
   build-docker:
     runs-on: ubuntu-latest
@@ -96,5 +96,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
+            ghcr.io/miranoverhoef/zoraxy-relay-client:latest
+            ghcr.io/miranoverhoef/zoraxy-relay-client:${{ steps.version.outputs.tag }}
+            # Legacy aliases keep existing v1.x automatic-update connectors moving to v2.
             ghcr.io/miranoverhoef/zoraxy-tunnel-client:latest
             ghcr.io/miranoverhoef/zoraxy-tunnel-client:${{ steps.version.outputs.tag }}
