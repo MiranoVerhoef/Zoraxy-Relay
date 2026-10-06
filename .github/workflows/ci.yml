@@ -25,8 +25,8 @@ jobs:
 
       - name: Build plugin and client
         run: |
-          go build -o /tmp/zoraxy-tunnel .
-          go build -o /tmp/tunnel-client ./client
+          go build -o /tmp/zoraxy-relay .
+          go build -o /tmp/zoraxy-relay-client ./client
 
       - name: Validate browser JavaScript
         run: |
