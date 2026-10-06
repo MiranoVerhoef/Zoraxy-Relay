@@ -7,18 +7,18 @@ import (
 	"net/http"
 	"strings"
 	"sync"
-	"zoraxy-tunnel/wire"
+	"github.com/MiranoVerhoef/Zoraxy-Relay/wire"
 )
 
 type ingressServer struct{store *Store;registry *sessionRegistry}
 func newIngressServer(store *Store,registry *sessionRegistry)*ingressServer{return &ingressServer{store:store,registry:registry}}
-func (g *ingressServer) listenAndServe(addr string)error{log.Printf("[tunnel] ingress http on %s",addr);return http.ListenAndServe(addr,g)}
+func (g *ingressServer) listenAndServe(addr string)error{log.Printf("[relay] ingress http on %s",addr);return http.ListenAndServe(addr,g)}
 
 func (g *ingressServer) ServeHTTP(w http.ResponseWriter,r *http.Request){
 	host:=stripPort(r.Host);service,tunnel,ok:=g.resolve(host,r.URL.Path);if !ok{http.Error(w,"no tunnel service for "+host,http.StatusBadGateway);return};if !g.registry.online(tunnel.ID){http.Error(w,"tunnel offline",http.StatusBadGateway);return}
 	isWS:=isWebSocketUpgrade(r);head:=wire.RequestHead{Target:service.Target,Method:r.Method,URL:r.URL.RequestURI(),Host:r.Host,Headers:flattenHeaders(r.Header),IsWebSocket:isWS,SkipTLSVerify:service.SkipTLSVerify}
 	stream,err:=g.registry.forward(tunnel.ID,tunnel.PreferredConnectorID,head,r.Body);if err!=nil{if err==errTunnelOffline{http.Error(w,"tunnel offline",http.StatusBadGateway)}else{http.Error(w,"tunnel error",http.StatusBadGateway)};return};defer stream.Close()
-	var resp wire.ResponseHead;if err:=wire.ReadJSON(stream,&resp);err!=nil{http.Error(w,"tunnel read error",http.StatusBadGateway);return};if isWS{g.serveWebSocket(w,r,stream,resp);return};copyHeaders(w.Header(),resp.Headers);w.WriteHeader(resp.Status);if err:=wire.ReadBody(w,stream);err!=nil&&!isClosedConnErr(err){log.Printf("[tunnel] body copy: %v",err)}
+	var resp wire.ResponseHead;if err:=wire.ReadJSON(stream,&resp);err!=nil{http.Error(w,"tunnel read error",http.StatusBadGateway);return};if isWS{g.serveWebSocket(w,r,stream,resp);return};copyHeaders(w.Header(),resp.Headers);w.WriteHeader(resp.Status);if err:=wire.ReadBody(w,stream);err!=nil&&!isClosedConnErr(err){log.Printf("[relay] body copy: %v",err)}
 }
 func (g *ingressServer) serveWebSocket(w http.ResponseWriter,r *http.Request,stream io.ReadWriteCloser,resp wire.ResponseHead){hj,ok:=w.(http.Hijacker);if !ok{http.Error(w,"websocket not supported",http.StatusInternalServerError);return};conn,bufrw,err:=hj.Hijack();if err!=nil{return};defer conn.Close();defer bufrw.Flush();bufrw.WriteString("HTTP/1.1 101 Switching Protocols\r\n");for k,v:=range resp.Headers{bufrw.WriteString(k);bufrw.WriteString(": ");bufrw.WriteString(v);bufrw.WriteString("\r\n")};bufrw.WriteString("\r\n");bufrw.Flush();var wg sync.WaitGroup;wg.Add(2);go func(){defer wg.Done();_ = wire.PumpRawToFrames(stream,conn)}();go func(){defer wg.Done();_ = wire.PumpFramesToRaw(conn,stream)}();wg.Wait()}
 func (g *ingressServer) resolve(host,path string)(Service,Tunnel,bool){for _,t:=range g.store.snapshot(){var best *Service;for i:=range t.Services{svc:=&t.Services[i];if !svc.Enabled||!strings.EqualFold(svc.Host,host){continue};if svc.Path!=""&&!strings.HasPrefix(path,svc.Path){continue};if best==nil||len(svc.Path)>len(best.Path){best=svc}};if best!=nil{return *best,t,true}};return Service{},Tunnel{},false}
