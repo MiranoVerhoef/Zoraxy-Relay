@@ -72,7 +72,7 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: ${{ steps.version.outputs.tag }}
           prerelease: true
-          draft: false
+          draft: true
           make_latest: false
           fail_on_unmatched_files: true
           body: |
