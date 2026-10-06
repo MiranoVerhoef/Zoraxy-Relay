@@ -2,8 +2,6 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
     branches:
       - main
     paths:
@@ -42,18 +40,8 @@ jobs:
 
       - name: Build plugin + client
         run: |
-          for PKG in "zoraxy-relay:." "zoraxy-relay-client:./client"; do
-            BINARY="${PKG%%:*}"
-            PKGDIR="${PKG##*:}"
-            for TARGET in linux/amd64 linux/arm64 linux/arm darwin/amd64 darwin/arm64 windows/amd64 windows/arm64; do
-              GOOS="${TARGET%/*}"
-              GOARCH="${TARGET#*/}"
-              OUTPUT="${BINARY}_${GOOS}_${GOARCH}"
-              [ "$GOOS" = "windows" ] && OUTPUT="${OUTPUT}.exe"
-              GOOS=$GOOS GOARCH=$GOARCH go build -trimpath -ldflags="-s -w" -o "$OUTPUT" "$PKGDIR"
-              echo "built $OUTPUT"
-            done
-          done
+          go test ./...
+          bash scripts/build-release.sh dist
 
       - uses: softprops/action-gh-release@v2
         with:
@@ -63,8 +51,8 @@ jobs:
           generate_release_notes: true
           make_latest: true
           files: |
-            zoraxy-relay_*
-            zoraxy-relay-client_*
+            dist/zoraxy-relay_*
+            dist/zoraxy-relay-client_*
 
   build-docker:
     runs-on: ubuntu-latest
@@ -96,9 +84,6 @@ jobs:
           file: ./client/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          # Keep the old image as a migration alias so v1.x auto-update connectors can reach v2.
           tags: |
             ghcr.io/miranoverhoef/zoraxy-relay-client:latest
             ghcr.io/miranoverhoef/zoraxy-relay-client:${{ steps.version.outputs.tag }}
-            ghcr.io/miranoverhoef/zoraxy-tunnel-client:latest
-            ghcr.io/miranoverhoef/zoraxy-tunnel-client:${{ steps.version.outputs.tag }}

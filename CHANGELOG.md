@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Changed
+- Remove the legacy plugin-store entry, Docker publishing alias, and client environment-variable fallbacks. Earlier v1 releases were test installations; Relay installations now use only the canonical v2 identifiers without data migration.
+- Use Relay branding in service-health requests.
+- Require Zoraxy 3.3.3+, the first stable release with the route-tag API used by Relay.
+- Validate runtime/client versions, all release assets, browser JavaScript, and active product identifiers in CI and before publishing binaries.
+- Build release binaries with a shared script and trigger automatic releases only from version metadata changes on main.
+
 ## [2.0.0] - 06.10.26
 ### Changed
 - Complete the project identity transition to **Zoraxy Relay**.

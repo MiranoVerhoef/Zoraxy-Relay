@@ -175,7 +175,7 @@ func (r *sessionRegistry) probe(tunnelID, preferred string, svc Service) (int, s
 		Method:        http.MethodHead,
 		URL:           "/",
 		Host:          svc.Host,
-		Headers:       map[string]string{"User-Agent": "Zoraxy-Tunnel-Enhanced-Health/1.9"},
+		Headers:       map[string]string{"User-Agent": "Zoraxy-Relay-Health/" + pluginVersion},
 		SkipTLSVerify: svc.SkipTLSVerify,
 	}
 	if err := wire.WriteJSON(stream, head); err != nil {
