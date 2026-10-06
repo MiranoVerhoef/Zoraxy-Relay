@@ -32,6 +32,11 @@ jobs:
           test "$(cat .release-channel)" = beta
           TAG=$(jq -r '"v\(.version_major).\(.version_minor).\(.version_patch)-beta.1"' .introspect)
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          TAG_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha')
+          if [ "$TAG_SHA" != "$GITHUB_SHA" ]; then
+            echo "::error::Push a lightweight beta tag pointing to this commit before publishing."
+            exit 1
+          fi
           gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" > /tmp/releases.json
           if jq -e --arg tag "$TAG" 'any(.[]; .tag_name == $tag)' /tmp/releases.json >/dev/null; then
             echo "::error::This beta version already exists. Advance the numeric version before publishing another beta."

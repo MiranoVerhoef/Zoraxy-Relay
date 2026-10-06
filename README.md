@@ -105,6 +105,8 @@ https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/beta/dir
 
 The beta index pins downloads to a prerelease tag, never `releases/latest`. Beta connectors use `ghcr.io/miranoverhoef/zoraxy-relay-client:beta`. Publishing a beta does not update the stable index, stable GitHub release, or Docker `:latest` tag.
 
+When publishing a new beta, update `.introspect`, plugin/client version strings, `.releaseurl`, and the beta index to the next numeric version and matching prerelease tag. Commit those changes, then create a lightweight tag pointing to the commit and push both refs together, for example `git tag v2.0.2-beta.1` followed by `git push --atomic origin beta v2.0.2-beta.1`. The workflow verifies that the tag points to the build's exact commit. Creating tags with the maintainer's credentials avoids GitHub Actions token restrictions when a beta commit also modifies workflows.
+
 The beta uses the same plugin ID as stable, so it updates the existing installation in place and keeps configuration and TLS identity. It is an alternate channel for one installation. Back up the plugin's persistent files before testing. Remove the beta source when returning to stable.
 
 Zoraxy compares only numeric major/minor/patch fields. Each published beta therefore advances the numeric version and uses a tag such as `v2.0.1-beta.1`; the next beta might be `v2.0.2-beta.1`. The eventual stable version must be higher than the tested numeric version for store updates to work. To return to an older stable release, stop the plugin and manually replace only its executable with the stable binary, preserving its persistent files.
