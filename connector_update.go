@@ -74,7 +74,7 @@ func (a *apiServer) handleConnectorUpdate(w http.ResponseWriter, r *http.Request
 	}
 	user, password, ok := connectorUpdaterCredentials(body.TunnelID, body.ConnectorID)
 	if !ok {
-		http.Error(w, "updater authentication is not available; redeploy this connector using the v1.12 automatic Compose configuration", http.StatusConflict)
+		http.Error(w, "updater authentication is not available; redeploy this connector using the current Zoraxy Relay automatic Compose configuration", http.StatusConflict)
 		return
 	}
 	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(user+":"+password))
