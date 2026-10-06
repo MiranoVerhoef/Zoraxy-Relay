@@ -38,6 +38,12 @@ jobs:
           node --check web/setup.js
           node --check web/v113.js
 
+      - name: Validate runtime metadata and active identifiers
+        run: node scripts/validate-release.cjs /tmp/zoraxy-relay /tmp/zoraxy-relay-client
+
+      - name: Build and validate all release assets
+        run: bash scripts/build-release.sh /tmp/relay-assets
+
       - name: Validate store metadata
         shell: bash
         run: |
