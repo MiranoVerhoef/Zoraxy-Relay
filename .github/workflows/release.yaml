@@ -1,29 +1,48 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '.introspect'
-  workflow_dispatch:
+  release:
+    types: [published]
+
+concurrency:
+  group: relay-stable-release
+  cancel-in-progress: false
 
 jobs:
   build-binaries:
+    if: github.event.release.prerelease == false && github.event.release.draft == false
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
 
       - uses: actions/setup-go@v5
         with:
           go-version: '1.23'
 
-      - name: Read plugin version
+      - name: Validate release tag and source
         id: version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           TAG=$(jq -r '"v\(.version_major).\(.version_minor).\(.version_patch)"' .introspect)
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || [ "$RELEASE_TAG" != "$TAG" ]; then
+            echo "::error::The stable release tag must match the plugin version ($TAG)."
+            exit 1
+          fi
+          git fetch origin main
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::error::Stable releases must use a commit merged into main."
+            exit 1
+          fi
+          if [ -f .release-channel ]; then
+            echo "::error::A stable release cannot contain beta channel metadata."
+            exit 1
+          fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Validate store metadata
@@ -43,16 +62,11 @@ jobs:
           go test ./...
           bash scripts/build-release.sh dist
 
-      - uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          target_commitish: ${{ github.sha }}
-          name: ${{ steps.version.outputs.tag }}
-          generate_release_notes: true
-          make_latest: true
-          files: |
-            dist/zoraxy-relay_*
-            dist/zoraxy-relay-client_*
+      - name: Upload binaries to the published release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: gh release upload "$RELEASE_TAG" dist/zoraxy-relay_* dist/zoraxy-relay-client_* --clobber
 
   build-docker:
     runs-on: ubuntu-latest
@@ -62,6 +76,8 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
 
       - name: Read plugin version
         id: version

@@ -1,20 +1,18 @@
 .btn.primary{
-  background:linear-gradient(180deg,#3a9bea 0%,#187dcc 100%);
-  border:1px solid #126eb5;
+  background:var(--theme_highlight,#1677ff);
+  border:1px solid transparent;
   color:#fff;
   font-weight:650;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 3px 8px rgba(18,110,181,.22),0 1px 2px rgba(0,0,0,.14);
-  transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;
+  box-shadow:none;
+  transition:background .12s ease,border-color .12s ease;
 }
 .btn.primary:hover{
   filter:brightness(1.06);
-  transform:translateY(-1px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 5px 12px rgba(18,110,181,.28),0 2px 3px rgba(0,0,0,.14);
+  box-shadow:none;
 }
 .btn.primary:active{
-  transform:translateY(1px);
   filter:brightness(.98);
-  box-shadow:inset 0 2px 4px rgba(0,0,0,.18),0 1px 2px rgba(18,110,181,.18);
+  box-shadow:none;
 }
 .btn.primary:focus-visible{outline:2px solid rgba(58,155,234,.45);outline-offset:2px}
 
@@ -29,5 +27,5 @@
 .connector-action .update-now.updating{opacity:.7;pointer-events:none}
 .connector-refresh-note{font-size:10px;color:var(--text_color_secondary,#929aa6)}
 
-.brandmark{background:transparent!important;box-shadow:none!important}
+.brandmark{background:transparent!important;box-shadow:none}
 .brandmark img{object-fit:contain!important;background:transparent!important}

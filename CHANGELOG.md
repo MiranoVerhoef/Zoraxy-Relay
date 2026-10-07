@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 07.10.26
+### Added
+- Direct Add service and Edit actions, Copy URL in the service menu, and connector column labels.
+### Changed
+- Flatten buttons and remove decorative gradients, shadows, status halos, and redundant tunnel/service icons.
+- Show service health independently from route installation, simplify TLS warnings, label traffic directions, and hide redundant preferred-connector actions.
+- Build and upload release binaries and Docker images only when a stable GitHub release is published, with matching version and main-branch validation.
+- Skip CI for documentation-only changes and retire the beta branch workflow and store index.
+
 ## [2.0.0] - 06.10.26
 ### Changed
 - Complete the major project identity transition to **Zoraxy Relay**.
