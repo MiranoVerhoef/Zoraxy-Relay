@@ -7,6 +7,8 @@ const intro = JSON.parse(fs.readFileSync('.introspect', 'utf8'));
 const store = JSON.parse(fs.readFileSync('directories/index2.json', 'utf8'));
 const repo = 'https://github.com/MiranoVerhoef/Zoraxy-Relay';
 const version = `${intro.version_major}.${intro.version_minor}.${intro.version_patch}`;
+const tag = `v${version}`;
+const downloadBase = `${repo}/releases/latest/download`;
 assert.equal(intro.id, 'com.miranoverhoef.zoraxy-relay');
 assert.equal(intro.name, 'Zoraxy Relay');
 assert.equal(intro.url, repo);
@@ -16,14 +18,14 @@ for (const key of Object.keys(intro)) {
   assert.deepEqual(entry.PluginIntroSpect[key], intro[key], `Store metadata: ${key}`);
 }
 assert.equal(entry.IconPath, `https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/main/icon.png?v=${version}`);
-assert.equal(fs.readFileSync('.releaseurl', 'utf8').trim(), `${repo}/releases/latest/download`);
+assert.equal(fs.readFileSync('.releaseurl', 'utf8').trim(), downloadBase);
 assert.match(fs.readFileSync('go.mod', 'utf8'), /^module github\.com\/MiranoVerhoef\/Zoraxy-Relay\r?\n/);
 
 const targets = ['linux_amd64', 'linux_arm64', 'linux_arm', 'darwin_amd64', 'darwin_arm64', 'windows_amd64', 'windows_arm64'];
 assert.deepEqual(Object.keys(entry.DownloadURLs).sort(), [...targets].sort());
 for (const target of targets) {
   const suffix = target.startsWith('windows_') ? '.exe' : '';
-  assert.equal(entry.DownloadURLs[target], `${repo}/releases/latest/download/zoraxy-relay_${target}${suffix}`);
+  assert.equal(entry.DownloadURLs[target], `${downloadBase}/zoraxy-relay_${target}${suffix}`);
   if (process.argv[4]) {
     for (const binary of ['zoraxy-relay', 'zoraxy-relay-client']) {
       assert.ok(fs.statSync(path.join(process.argv[4], `${binary}_${target}${suffix}`)).size > 0);
@@ -37,7 +39,7 @@ if (process.argv[2]) {
   }
 }
 if (process.argv[3]) {
-  assert.equal(execFileSync(path.resolve(process.argv[3]), ['--version'], { encoding: 'utf8' }).trim(), `v${version}`);
+  assert.equal(execFileSync(path.resolve(process.argv[3]), ['--version'], { encoding: 'utf8' }).trim(), tag);
 }
 
 // Historical release notes and genuine upstream contributor credit are preserved.

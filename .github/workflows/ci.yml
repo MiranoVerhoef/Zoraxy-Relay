@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**/*.md'
   pull_request:
+    paths-ignore:
+      - '**/*.md'
   workflow_dispatch:
 
 concurrency:
@@ -43,24 +47,3 @@ jobs:
 
       - name: Build and validate all release assets
         run: bash scripts/build-release.sh /tmp/relay-assets
-
-      - name: Validate store metadata
-        shell: bash
-        run: |
-          set -euo pipefail
-          INTRO_VERSION=$(jq -r '"v\(.version_major).\(.version_minor).\(.version_patch)"' .introspect)
-          STORE_VERSION=$(jq -r '.[] | select(.PluginIntroSpect.id == "com.miranoverhoef.zoraxy-relay") | .PluginIntroSpect | "v\(.version_major).\(.version_minor).\(.version_patch)"' directories/index2.json)
-          echo "Runtime/store metadata check: .introspect=${INTRO_VERSION}, store=${STORE_VERSION}"
-
-          if ! jq -e --slurpfile intro .introspect '
-            (.[] | select(.PluginIntroSpect.id == $intro[0].id) | .PluginIntroSpect) as $store |
-            $store.id == $intro[0].id and
-            $store.name == $intro[0].name and
-            $store.author == $intro[0].author and
-            $store.version_major == $intro[0].version_major and
-            $store.version_minor == $intro[0].version_minor and
-            $store.version_patch == $intro[0].version_patch
-          ' directories/index2.json >/dev/null; then
-            echo "::error title=Plugin metadata mismatch::.introspect and directories/index2.json do not match. Update both version/identity metadata files in the same release change."
-            exit 1
-          fi

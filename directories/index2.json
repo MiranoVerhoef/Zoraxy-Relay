@@ -1,6 +1,6 @@
 [
   {
-    "IconPath": "https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/main/icon.png?v=2.0.0",
+    "IconPath": "https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/main/icon.png?v=2.0.1",
     "PluginIntroSpect": {
       "id": "com.miranoverhoef.zoraxy-relay",
       "name": "Zoraxy Relay",
@@ -11,7 +11,7 @@
       "type": 1,
       "version_major": 2,
       "version_minor": 0,
-      "version_patch": 0,
+      "version_patch": 1,
       "static_capture_paths": null,
       "static_capture_ingress": "",
       "dynamic_capture_sniff": "",
