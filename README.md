@@ -61,42 +61,6 @@ docker compose up -d
 
 Tunnel credentials remain unchanged during normal client or plugin upgrades.
 
-## Build
-
-Requirements: Go 1.23+
-
-```bash
-go build -o zoraxy-relay .
-go build -o zoraxy-relay-client ./client
-```
-
-## Zoraxy plugin installation
-
-Zoraxy 3.3.3+ is required. This is the first stable release with `/api/proxy/setTags`; its plugin API permissions, proxy list/add/delete, and ACME endpoints also support Relay's calls. See [Zoraxy v3.3.3 API registration](https://github.com/tobychui/zoraxy/blob/v3.3.3/src/api.go) and [plugin startup configuration](https://github.com/tobychui/zoraxy/blob/v3.3.3/src/mod/plugins/lifecycle.go). Add this repository's plugin index as a community source:
-
-```text
-https://raw.githubusercontent.com/MiranoVerhoef/Zoraxy-Relay/refs/heads/main/directories/index2.json
-```
-
-The plugin store handles the correct binary for the Zoraxy host platform.
-
-## Client
-
-The dashboard generates the correct command after a tunnel or connector credential is created. A client uses:
-
-```text
---server HOST[:9443]
---token TOKEN
---fingerprint SHA256_FINGERPRINT
---connector-id UNIQUE_CONNECTOR_ID
-```
-
-Use a different stable connector ID for each redundant host.
-
-## Development workflow
-
-CI runs on pull requests and on `main`. Intermediate commits on `release/**` branches do not run automatically, which prevents expected release-assembly states such as temporarily mismatched version metadata from creating misleading failed checks. Open a pull request when a release branch is ready; the full Go, JavaScript, build, and store-metadata validation runs there before release.
-
 ## License
 
 This project remains licensed under the repository's existing MIT license and is based on the original `sniffingsugar/zoraxy-tunnel` project.
