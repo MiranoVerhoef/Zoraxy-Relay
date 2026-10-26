@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	clientVersion      = "v2.0.1"
+	clientVersion      = "v2.0.2"
 	defaultControlPort = "9443"
 	dialTimeout        = 10 * time.Second
 	initialBackoff     = time.Second

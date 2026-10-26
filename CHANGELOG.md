@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.2] - 26.10.26
+### Changed
+- Show published services directly in a focused tunnel card with clear availability and direct Open/Edit actions.
+- Move connector telemetry, versions, traffic and failover controls into expandable connection details.
+- Expand service names to inspect targets, route installation, response times and upstream TLS settings; keep TLS warnings visible.
+- Collapse node connection information and support narrow screens without a wide tunnel table.
+- Preserve expanded diagnostics and service details across live refreshes, and keep action menus open while choosing an action.
+
 ## [2.0.1] - 07.10.26
 ### Added
 - Direct Add service and Edit actions, Copy URL in the service menu, and connector column labels.
