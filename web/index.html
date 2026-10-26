@@ -6,17 +6,18 @@
 <title>Zoraxy Relay</title>
 <link rel="stylesheet" href="/darktheme.css">
 <meta name="zoraxy.csrf.Token" content="{{.csrfToken}}">
-<link rel="stylesheet" href="style.css?v=2.0.1">
-<link rel="stylesheet" href="connectors.css?v=2.0.1">
-<link rel="stylesheet" href="enrollment.css?v=2.0.1">
-<link rel="stylesheet" href="v111.css?v=2.0.1">
-<link rel="stylesheet" href="setup.css?v=2.0.1">
-<link rel="stylesheet" href="polish.css?v=2.0.1">
+<link rel="stylesheet" href="style.css?v=2.0.2">
+<link rel="stylesheet" href="connectors.css?v=2.0.2">
+<link rel="stylesheet" href="enrollment.css?v=2.0.2">
+<link rel="stylesheet" href="v111.css?v=2.0.2">
+<link rel="stylesheet" href="setup.css?v=2.0.2">
+<link rel="stylesheet" href="polish.css?v=2.0.2">
+<link rel="stylesheet" href="dashboard.css?v=2.0.2">
 </head>
 <body>
 <div class="app-shell">
   <header class="app-header">
-    <div class="brandmark"><img src="icon.png?v=2.0.1" alt=""></div>
+    <div class="brandmark"><img src="icon.png?v=2.0.2" alt=""></div>
     <div class="brand-copy">
       <h1>Zoraxy Relay</h1>
       <p>Secure self-hosted relay management for Zoraxy.</p>
@@ -28,6 +29,7 @@
     </div>
   </header>
 
+  <details class="node-connection-info"><summary>Node connection info</summary>
   <section class="control-strip">
     <div class="control-item"><div class="control-icon">▣</div><div><span>Control node</span><strong class="mono" id="summaryControl">Not configured</strong></div></div>
     <div class="control-divider"></div>
@@ -37,6 +39,7 @@
     <div class="control-divider"></div>
     <button class="btn secondary" onclick="copyConnectionInfo()"><span class="btn-icon">▣</span>Copy connection info</button>
   </section>
+  </details>
 
   <div class="setup-banner hidden" id="setupBanner">
     <div><strong>Finish Control Node setup</strong><span>Configure the public hostname or IP address clients use to reach this node.</span></div>
@@ -52,9 +55,9 @@
     <section id="viewTunnels" class="view active">
       <div class="table-card">
         <div class="table-toolbar">
-          <div class="toolbar-title"><h2>Tunnels</h2><p>Manage client connections and published services.</p></div>
+          <div class="toolbar-title"><h2>Tunnels</h2><p>Your published services, with connection details when you need them.</p></div>
           <div class="toolbar-actions">
-            <div class="searchbox"><span>⌕</span><input id="tunnelSearch" placeholder="Search tunnels…" oninput="renderTunnels()"></div>
+            <div class="searchbox"><span>⌕</span><input id="tunnelSearch" placeholder="Search tunnels or services…" oninput="renderTunnels()"></div>
             <select class="select" id="tunnelFilter" onchange="renderTunnels()"><option value="all">All</option><option value="online">Online</option><option value="offline">Offline</option><option value="disabled">Disabled</option><option value="updates">Update available</option></select>
             <button class="btn primary" onclick="openCreateTunnel()"><span class="btn-icon">＋</span>Create tunnel</button>
           </div>
@@ -95,12 +98,13 @@
 <div class="overlay" id="downloadModal"><div class="modal small"><div class="modal-head"><div><h2>Download tunnel client</h2><p>Choose a build for the machine running your private service.</p></div><button class="close" onclick="closeModal('downloadModal')">×</button></div><div class="download-list" id="downloadLinks"></div></div></div>
 <div id="floatingMenuLayer"></div>
 <div class="toast" id="toast">Saved</div>
-<script src="app.js?v=2.0.1"></script>
-<script src="connectors.js?v=2.0.1"></script>
-<script src="enrollment.js?v=2.0.1"></script>
-<script src="health.js?v=2.0.1"></script>
-<script src="v111.js?v=2.0.1"></script>
-<script src="setup.js?v=2.0.1"></script>
-<script src="v113.js?v=2.0.1"></script>
+<script src="app.js?v=2.0.2"></script>
+<script src="connectors.js?v=2.0.2"></script>
+<script src="enrollment.js?v=2.0.2"></script>
+<script src="health.js?v=2.0.2"></script>
+<script src="v111.js?v=2.0.2"></script>
+<script src="setup.js?v=2.0.2"></script>
+<script src="v113.js?v=2.0.2"></script>
+<script src="dashboard.js?v=2.0.2"></script>
 </body>
 </html>
