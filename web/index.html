@@ -29,7 +29,7 @@
     </div>
   </header>
 
-  <details class="node-connection-info"><summary>Node connection info</summary>
+  <details class="node-connection-info"><summary><svg class="relay-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7"/></svg>Node connection info</summary>
   <section class="control-strip">
     <div class="control-item"><div class="control-icon">▣</div><div><span>Control node</span><strong class="mono" id="summaryControl">Not configured</strong></div></div>
     <div class="control-divider"></div>
@@ -66,7 +66,7 @@
           <div class="tunnel-table-head"><div class="col-expand"></div><div class="col-name">Name</div><div>Status</div><div>Services</div><div>Uptime</div><div>Version</div><div>Last activity</div><div>Traffic</div><div class="col-actions">Actions</div></div>
           <div id="tunnels"><div class="empty-state"><strong>Loading tunnels…</strong><span>Please wait.</span></div></div>
         </div>
-        <div class="table-footer"><div id="tableSummary">0 tunnels</div><div class="pagination"><span>Rows per page</span><select class="select compact" id="rowsPerPage" onchange="changePageSize()"><option>10</option><option>25</option><option>50</option></select><button class="page-btn" id="prevPage" onclick="changePage(-1)">‹</button><span class="page-current" id="pageCurrent">1</span><button class="page-btn" id="nextPage" onclick="changePage(1)">›</button></div></div>
+        <div class="table-footer"><div id="tableSummary">0 tunnels</div><div class="pagination"><span>Rows per page</span><select class="select compact" id="rowsPerPage" onchange="changePageSize()"><option>10</option><option>25</option><option>50</option></select><button class="page-btn" id="prevPage" aria-label="Previous page" onclick="changePage(-1)"><svg class="relay-page-chevron is-previous" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7"/></svg></button><span class="page-current" id="pageCurrent">1</span><button class="page-btn" id="nextPage" aria-label="Next page" onclick="changePage(1)"><svg class="relay-page-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7"/></svg></button></div></div>
       </div>
     </section>
 
