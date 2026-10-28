@@ -1,5 +1,19 @@
 // Keep everyday service actions visible; reveal diagnostics only when requested.
 const OPEN_SERVICE_DETAILS = new Set();
+const COLLAPSED_TUNNELS_KEY = 'relay.collapsed-tunnels:' + location.pathname;
+const COLLAPSED_TUNNELS = new Set();
+try {
+  const saved = JSON.parse(localStorage.getItem(COLLAPSED_TUNNELS_KEY) || '[]');
+  if (Array.isArray(saved)) saved.filter(id => typeof id === 'string').forEach(id => COLLAPSED_TUNNELS.add(id));
+} catch { /* The dashboard also works when browser storage is unavailable. */ }
+
+function toggleTunnelCollapsed(id) {
+  COLLAPSED_TUNNELS.has(id) ? COLLAPSED_TUNNELS.delete(id) : COLLAPSED_TUNNELS.add(id);
+  try { localStorage.setItem(COLLAPSED_TUNNELS_KEY, JSON.stringify([...COLLAPSED_TUNNELS])); } catch {}
+  OPEN_MENU = null;
+  renderTunnels();
+  document.getElementById('relay-toggle-' + id)?.focus({preventScroll: true});
+}
 
 function toggleServiceDetails(tid, sid) {
   const key = tid + '/' + sid;
@@ -24,15 +38,18 @@ renderTunnelGroup = function(t) {
   const needsAttention = services.filter(s => serviceAvailability(t, s).tone === 'warning').length;
   const serviceSummary = services.length + ' service' + (services.length === 1 ? '' : 's');
   const connectionSummary = counts.total ? `${counts.online} of ${counts.total} connectors online` : 'No connectors reported';
-  return `<article class="relay-tunnel ${open ? 'diagnostics-open' : ''}">
+  const collapsed = COLLAPSED_TUNNELS.has(t.id);
+  return `<article class="relay-tunnel ${open ? 'diagnostics-open' : ''} ${collapsed ? 'is-collapsed' : ''}">
     <header class="relay-tunnel-header">
-      <div class="relay-tunnel-title"><h3>${esc(t.name)}</h3><span class="relay-connection ${connected ? 'healthy' : 'muted'}"><span class="status-dot ${connected ? 'ok' : ''}"></span>${label}</span></div>
+      <div class="relay-tunnel-title"><h3><button class="relay-tunnel-toggle" id="relay-toggle-${esc(t.id)}" aria-expanded="${!collapsed}" aria-controls="relay-body-${esc(t.id)}" onclick="toggleTunnelCollapsed('${t.id}')"><span class="relay-tunnel-chevron" aria-hidden="true"></span>${esc(t.name)}</button></h3><span class="relay-connection ${connected ? 'healthy' : 'muted'}"><span class="status-dot ${connected ? 'ok' : ''}"></span>${label}</span>${collapsed ? `<span class="relay-collapsed-count">${serviceSummary}${needsAttention ? `<span class="relay-attention"> · ${needsAttention} need attention</span>` : ''}</span>` : ''}</div>
       <div class="relay-tunnel-actions"><button class="btn secondary compact" onclick="openSvc('${t.id}')">Add service</button><div class="manage-wrap"><button class="icon-btn" aria-label="Manage ${esc(t.name)}" onclick="toggleActionMenu('${menuId}',event)">•••</button>${renderTunnelMenu(t, menuId, versionMismatch(c))}</div></div>
     </header>
+    <div id="relay-body-${esc(t.id)}"${collapsed ? ' hidden' : ''}>
     <div class="relay-tunnel-summary">${serviceSummary}${needsAttention ? `<span class="relay-attention">${needsAttention} need attention</span>` : ''}</div>
     ${renderServices(t)}
     <footer class="relay-connection-footer"><button class="relay-disclosure" aria-expanded="${open}" onclick="toggleTunnel('${t.id}')"><span aria-hidden="true">${open ? '▾' : '▸'}</span> Connection details</button><span>${connectionSummary}${versionMismatch(c) ? ' · Update available' : ''}</span></footer>
     ${open ? `<div class="relay-diagnostics">${renderConnectors(t, c)}</div>` : ''}
+    </div>
   </article>`;
 };
 
