@@ -106,6 +106,9 @@ function renderTunnels(){
   const online=TUNNELS.filter(t=>t.online).length,disabled=TUNNELS.filter(t=>!t.enabled).length,offline=TUNNELS.length-online-disabled
   document.getElementById('tableSummary').textContent=`${TUNNELS.length} tunnel${TUNNELS.length===1?'':'s'}  •  ${online} online  •  ${Math.max(0,offline)} offline  •  ${disabled} disabled`
   document.getElementById('pageCurrent').textContent=currentPage;document.getElementById('prevPage').disabled=currentPage<=1;document.getElementById('nextPage').disabled=currentPage>=totalPages
+  const pagination=document.querySelector('.pagination')
+  // Keep the size selector for larger lists, even when the selected size fits one page.
+  if(pagination){pagination.hidden=list.length<=10;pagination.classList.toggle('single-page',totalPages===1)}
 }
 function changePage(delta){const pages=Math.max(1,Math.ceil(filteredTunnels().length/pageSize));currentPage=Math.min(pages,Math.max(1,currentPage+delta));renderTunnels()}
 function changePageSize(){pageSize=Number(document.getElementById('rowsPerPage').value)||10;currentPage=1;renderTunnels()}

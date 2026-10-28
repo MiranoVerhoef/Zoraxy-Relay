@@ -1,6 +1,10 @@
 /* Services are the primary content; connection telemetry is secondary. */
 .app-shell{max-width:1320px;margin:auto}
 .app-header{margin-bottom:16px}
+body .tabs-nav .tab.active{color:#1558a5;font-weight:700}
+body.darkTheme .tabs-nav .tab.active{color:#9bc6ff}
+body .tabs-nav .tab.active:after{background:currentColor;height:3px}
+.tabs-nav .tab:focus-visible{outline:2px solid #1769c2;outline-offset:-4px}
 .brand-copy p{display:none}
 .brandmark{width:40px;height:40px}
 .brand-copy h1{font-size:22px}
@@ -22,8 +26,8 @@
 .relay-tunnel-title h3{font-size:17px;margin:0;overflow-wrap:anywhere}
 .relay-tunnel-toggle{display:flex;align-items:center;gap:12px;border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:4px 0;cursor:pointer;text-align:left;overflow-wrap:anywhere}
 .relay-tunnel-toggle:focus-visible{outline:2px solid #1769c2;outline-offset:4px;border-radius:2px}
-.relay-tunnel-chevron{width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);flex:none;margin:0 3px 4px 1px}
-.relay-tunnel-toggle[aria-expanded="false"] .relay-tunnel-chevron{transform:rotate(-45deg);margin-bottom:0}
+.relay-chevron{width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);flex:none;margin:0 3px 4px 1px}
+[aria-expanded="false"]>.relay-chevron{transform:rotate(-45deg);margin-bottom:0}
 .relay-tunnel.is-collapsed .relay-tunnel-header{padding-bottom:22px}
 .relay-collapsed-count{font-size:12px;color:var(--text_color_secondary,#64748b)}
 .relay-tunnel [hidden]{display:none!important}
@@ -31,15 +35,14 @@
 .relay-tunnel-actions{display:flex;gap:8px;align-items:center}
 .relay-tunnel-summary{padding:6px 24px 22px;color:var(--text_color_secondary,#64748b);font-size:12px;display:flex;gap:14px}
 .relay-attention,.relay-tls-warning{color:#a25c0a}
-.relay-service-columns,.relay-service-row{display:grid;grid-template-columns:minmax(0,1fr) 170px 176px;gap:24px;align-items:center;padding:17px 24px}
+.relay-service-columns,.relay-service-row{display:grid;grid-template-columns:minmax(0,360px) minmax(130px,1fr) 176px;gap:24px;align-items:center;padding:17px 24px}
 .relay-service-columns{font-size:11px;font-weight:600;color:var(--text_color_secondary,#64748b);padding-top:10px;padding-bottom:10px;border-top:1px solid var(--divider_color,#dce1e7);border-bottom:1px solid var(--divider_color,#dce1e7)}
 .relay-service-columns>span:last-child{text-align:right}
 .relay-service+.relay-service{border-top:1px solid var(--divider_color,#dce1e7)}
 .relay-service-identity{min-width:0}
 .relay-service-name{padding:0;background:transparent;border:0;color:var(--text_color,#1f2937);font:inherit;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;max-width:100%}
-.relay-service-name>span:first-child{overflow-wrap:anywhere}
-.relay-service-chevron{color:var(--text_color_secondary,#64748b);font-size:11px}
-.relay-service-host{display:block;color:var(--text_color_secondary,#64748b);font-size:12px;margin-top:5px;overflow-wrap:anywhere}
+.relay-service-name>span:last-child{overflow-wrap:anywhere}
+.relay-service-host{display:block;color:var(--text_color_secondary,#64748b);font-size:12px;margin:5px 0 0 21px;overflow-wrap:anywhere}
 .relay-service-status{display:flex;flex-direction:column;align-items:flex-start;gap:5px;font-size:12px}
 .relay-state{display:inline-flex;align-items:center;gap:7px}
 .relay-state.warning{color:#a25c0a}
@@ -63,6 +66,8 @@
 .relay-empty strong{color:var(--text_color,#1f2937)}
 .relay-empty p{margin:6px 0 16px}
 .table-footer{padding:18px 0;border:0;height:auto;margin-top:6px}
+.pagination[hidden]{display:none}
+.pagination.single-page .page-btn,.pagination.single-page .page-current{display:none}
 .toolbar-actions .searchbox{min-width:0}
 body.darkTheme .relay-attention,body.darkTheme .relay-tls-warning,body.darkTheme .relay-state.warning{color:#e7b268}
 @media(max-width:800px){.table-toolbar{align-items:flex-start;flex-direction:column}.toolbar-actions{width:100%;margin:0}.relay-service-columns,.relay-service-row{grid-template-columns:minmax(0,1fr) 130px 170px;gap:12px;padding-left:18px;padding-right:18px}.relay-tunnel-header{padding-left:18px;padding-right:18px}}
