@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.3] - 28.10.26
+### Added
+- Collapse an entire tunnel from its name control while retaining connection state, service count, attention summary and actions in its compact header.
+- Remember collapsed tunnels across page reloads and restore expanded service and connection details when reopening.
+### Changed
+- Bring service status closer to names and strengthen active-tab contrast in light and dark themes.
+- Hide unnecessary pagination while retaining the page-size selector for larger lists.
+- Use consistent SVG chevrons with rounded strokes for tunnel, service, connection, node-information and page controls.
+- Preserve keyboard focus when expanding services, label pagination controls, and respect reduced-motion preferences.
+
 ## [2.0.2] - 26.10.26
 ### Changed
 - Show published services directly in a focused tunnel card with clear availability and direct Open/Edit actions.

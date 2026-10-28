@@ -22,7 +22,7 @@ const (
 const (
 	verMajor = 2
 	verMinor = 0
-	verPatch = 2
+	verPatch = 3
 )
 
 var pluginVersion = fmt.Sprintf("v%d.%d.%d", verMajor, verMinor, verPatch)
